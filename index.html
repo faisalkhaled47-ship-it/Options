@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#EEF2EF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#30333A" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="خياراتي">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<title>خياراتي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#EEF2EF; --surface:#FFFFFF; --surface-2:#F5F7F5; --ink:#12201A; --ink-2:#4A5852; --muted:#76837D; --line:#DAE1DC;
+  --accent:#0A7556; --accent-ink:#FFFFFF; --accent-soft:#DCEFE6; --accent-strong:#064F3A;
+  --inc:#1D5FA8; --inc-soft:#DDE9F7;
+  --good:#1B7548; --warn:#9A5F06; --bad:#B8342B; --good-soft:#DFF1E6; --warn-soft:#F7EBD4; --bad-soft:#F8DFDB;
+  --scrim:rgba(12,22,18,.42); --toast-bg:#12201A; --toast-fg:#F1F6F3;
+  --shadow:0 1px 2px rgba(18,32,26,.05),0 6px 20px rgba(18,32,26,.06);
+  --f-display:"Readex Pro","IBM Plex Sans Arabic",system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;
+  --f-body:"IBM Plex Sans Arabic","Readex Pro",system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;
+  --r:16px; color-scheme:light;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#30333A; --surface:#3A3E45; --surface-2:#43474F; --ink:#F3F4F6; --ink-2:#CDD0D6; --muted:#AAAFB8; --line:#50555E;
+  --accent:#4FD09E; --accent-ink:#05231A; --accent-soft:#35564A; --accent-strong:#8BE8C4;
+  --inc:#93C2F5; --inc-soft:#33486B;
+  --good:#62D29F; --warn:#F0B655; --bad:#FF8A80; --good-soft:#33554A; --warn-soft:#5E4630; --bad-soft:#613A3A;
+  --scrim:rgba(0,0,0,.5); --toast-bg:#F3F4F6; --toast-fg:#1E2024;
+  --shadow:0 1px 2px rgba(0,0,0,.18),0 6px 18px rgba(0,0,0,.14); color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#30333A; --surface:#3A3E45; --surface-2:#43474F; --ink:#F3F4F6; --ink-2:#CDD0D6; --muted:#AAAFB8; --line:#50555E;
+  --accent:#4FD09E; --accent-ink:#05231A; --accent-soft:#35564A; --accent-strong:#8BE8C4;
+  --inc:#93C2F5; --inc-soft:#33486B;
+  --good:#62D29F; --warn:#F0B655; --bad:#FF8A80; --good-soft:#33554A; --warn-soft:#5E4630; --bad-soft:#613A3A;
+  --scrim:rgba(0,0,0,.5); --toast-bg:#F3F4F6; --toast-fg:#1E2024;
+  --shadow:0 1px 2px rgba(0,0,0,.18),0 6px 18px rgba(0,0,0,.14); color-scheme:dark }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums;unicode-bidi:isolate;direction:ltr;display:inline-block}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bg);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px);margin-top:calc(-1*env(safe-area-inset-top,0px))}
+.top-in{max-width:560px;margin:0 auto;padding:10px max(16px,env(safe-area-inset-left,0px));display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.logo{width:36px;height:36px;border-radius:11px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;flex:none}
+.logo svg{width:22px;height:22px}
+.brand h1{font-family:var(--f-display);font-weight:600;font-size:19px;line-height:1.2;margin:0}
+.brand p{margin:0;font-size:12.5px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.icon-btn{appearance:none;border:1px solid var(--line);background:var(--surface);width:40px;height:40px;border-radius:12px;display:grid;place-items:center;cursor:pointer;color:var(--ink-2);flex:none}
+.icon-btn svg{width:20px;height:20px}
+.wrap{max-width:560px;margin:0 auto;padding:14px max(16px,env(safe-area-inset-left,0px)) calc(96px + env(safe-area-inset-bottom,0px))}
+.view{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
+.card h2{font-family:var(--f-display);font-size:15.5px;font-weight:600;margin:0}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.hint{font-size:12px;color:var(--muted)}
+.muted{color:var(--muted)} .small{font-size:13px}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:3px;gap:3px}
+.seg button{appearance:none;border:0;background:none;color:var(--ink-2);font-weight:500;font-size:14.5px;padding:7px 6px;border-radius:9px;cursor:pointer;min-height:38px}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow);font-weight:600}
+.seg.cp button[data-v="call"][aria-pressed="true"]{background:var(--good-soft);color:var(--good)}
+.seg.cp button[data-v="put"][aria-pressed="true"]{background:var(--bad-soft);color:var(--bad)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.lbl{display:block;font-size:12.5px;color:var(--ink-2);font-weight:500;margin-bottom:5px}
+.field{width:100%;font-size:16px;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:var(--surface-2);color:var(--ink);min-height:44px;-webkit-appearance:none;appearance:none}
+input.field{direction:ltr;text-align:right}
+input.field.txt{direction:rtl}
+select.field{background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:16px 50%,11px 50%;background-size:5px 5px;background-repeat:no-repeat;padding-left:28px}
+.btn{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-weight:500;font-size:14px;padding:8px 13px;border-radius:11px;cursor:pointer;min-height:40px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.btn.block{width:100%;min-height:48px;font-size:15.5px}
+.btn.danger{color:var(--bad)}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{appearance:none;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font-size:13.5px;padding:6px 12px;border-radius:999px;cursor:pointer;min-height:34px}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+/* hero result */
+.hero{background:var(--accent);color:var(--accent-ink);border:0;box-shadow:var(--shadow)}
+.hero .k{font-size:13px;opacity:.85}
+.hero .v{font-family:var(--f-display);font-size:34px;font-weight:700;line-height:1.15;margin:2px 0}
+.hero .s{font-size:13.5px;opacity:.9}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.tile{background:rgba(255,255,255,.14);border-radius:12px;padding:9px 11px}
+:root[data-theme="dark"] .tile{background:rgba(0,0,0,.14)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tile{background:rgba(0,0,0,.14)}}
+.tile .k{font-size:12px} .tile .v2{font-family:var(--f-display);font-weight:600;font-size:17px}
+.rows{display:flex;flex-direction:column}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.row:last-child{border-bottom:0}
+.row .k{color:var(--ink-2)} .row.tot{font-weight:600;border-top:1px solid var(--line);border-bottom:0;margin-top:2px}
+.pos{color:var(--good)} .neg{color:var(--bad)} .wrn{color:var(--warn)}
+.alerts{display:flex;flex-direction:column;gap:8px}
+.alert{display:flex;gap:10px;align-items:flex-start;border-radius:13px;padding:10px 12px;font-size:13.5px;line-height:1.5}
+.alert.bad{background:var(--bad-soft)} .alert.warn{background:var(--warn-soft)} .alert.good{background:var(--good-soft)} .alert.info{background:var(--inc-soft)}
+.alert b{font-weight:600}
+.dot{width:8px;height:8px;border-radius:50%;flex:none;margin-top:7px}
+.alert.bad .dot{background:var(--bad)} .alert.warn .dot{background:var(--warn)} .alert.good .dot{background:var(--good)} .alert.info .dot{background:var(--inc)}
+.gauge{height:10px;border-radius:99px;background:var(--surface-2);overflow:hidden;border:1px solid var(--line)}
+.gauge i{display:block;height:100%;border-radius:99px;background:var(--accent)}
+svg.chart{width:100%;height:auto;display:block;direction:ltr}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--ink-2);margin-top:6px;flex-wrap:wrap}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-inline-end:5px}
+details.more{border-top:1px solid var(--line);margin-top:12px;padding-top:10px}
+details.more summary{cursor:pointer;font-size:13.5px;color:var(--accent);font-weight:500;list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+.mt{margin-top:10px}
+/* journal */
+.trade{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.trade:last-child{border-bottom:0}
+.badge{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:13px}
+.badge.call{background:var(--good-soft);color:var(--good)} .badge.put{background:var(--bad-soft);color:var(--bad)}
+.trade .t1{font-weight:600;font-size:14.5px} .trade .t2{font-size:12.5px;color:var(--muted)}
+.trade .amt{text-align:left;font-weight:600}
+.pill{font-size:11px;padding:2px 8px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink-2);margin-inline-start:6px;font-weight:500}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi{background:var(--surface-2);border-radius:12px;padding:10px 12px}
+.kpi .k{font-size:12px;color:var(--ink-2)} .kpi .v{font-family:var(--f-display);font-size:19px;font-weight:600}
+.empty{text-align:center;color:var(--muted);padding:26px 10px;font-size:14px}
+/* learn */
+.acc details{border-bottom:1px solid var(--line);padding:10px 0}
+.acc details:last-child{border-bottom:0}
+.acc summary{cursor:pointer;font-weight:600;font-size:14.5px;list-style:none;display:flex;justify-content:space-between;gap:8px}
+.acc summary::-webkit-details-marker{display:none}
+.acc summary::after{content:"+";color:var(--muted);font-weight:400}
+.acc details[open] summary::after{content:"−"}
+.acc p{margin:8px 0 0;color:var(--ink-2);font-size:14px}
+.check{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px;cursor:pointer}
+.check:last-child{border-bottom:0}
+.check input{width:20px;height:20px;accent-color:var(--accent);flex:none;margin-top:2px}
+.quiz-opt{display:block;width:100%;text-align:right;margin-top:8px}
+.quiz-opt.ok{background:var(--good-soft);border-color:var(--good)} .quiz-opt.no{background:var(--bad-soft);border-color:var(--bad)}
+/* tabs */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabs-in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+.tab{appearance:none;border:0;background:none;color:var(--muted);font-size:11.5px;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0 7px;cursor:pointer}
+.tab svg{width:23px;height:23px}
+.tab[aria-current="page"]{color:var(--accent)}
+/* sheet */
+.sheet{position:fixed;inset:0;z-index:40;display:flex;align-items:flex-end;justify-content:center;background:var(--scrim)}
+.panel{background:var(--bg);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:20px 20px 0 0;padding:8px 16px calc(20px + env(safe-area-inset-bottom,0px))}
+.grab{width:40px;height:5px;border-radius:9px;background:var(--line);margin:4px auto 10px}
+.panel h3{font-family:var(--f-display);font-size:17px;margin:0 0 12px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:50;background:var(--toast-bg);color:var(--toast-fg);padding:11px 16px;border-radius:13px;font-size:14px;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
+.foot{font-size:11.5px;color:var(--muted);text-align:center;line-height:1.6;margin-top:4px}
+.foot a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <div class="brand">
+    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 3 8-9"/><path d="M15 6h5v5"/></svg></div>
+    <div><h1>خياراتي</h1><p id="sub">حاسبة عقود الخيارات بالرسوم والريال</p></div>
+  </div>
+  <button class="icon-btn" id="openSettings" aria-label="الإعدادات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+</div></header>
+
+<main class="wrap">
+
+<!-- ============ الحاسبة ============ -->
+<section class="view" data-view="calc">
+  <div class="card">
+    <div class="card-h"><h2>الصفقة</h2><span class="hint" id="brokerHint"></span></div>
+    <div class="stack">
+      <div class="seg cp" id="cpSeg"><button data-v="call" aria-pressed="true">كول · صعود</button><button data-v="put" aria-pressed="false">بوت · هبوط</button></div>
+      <div class="grid2">
+        <div><label class="lbl" for="sym">الرمز</label><input class="field" id="sym" value="TSLA" autocapitalize="characters"></div>
+        <div><label class="lbl" for="broker">الوسيط</label><select class="field" id="broker"></select></div>
+      </div>
+      <div class="grid2">
+        <div><label class="lbl" for="S">سعر السهم الآن $</label><input class="field" id="S" inputmode="decimal" value="360"></div>
+        <div><label class="lbl" for="K">سعر التنفيذ $</label><input class="field" id="K" inputmode="decimal" value="380"></div>
+      </div>
+      <div class="grid3">
+        <div><label class="lbl" for="P">سعر العقد</label><input class="field" id="P" inputmode="decimal" value="12.50"></div>
+        <div><label class="lbl" for="N">عدد العقود</label><input class="field" id="N" inputmode="numeric" value="1"></div>
+        <div><label class="lbl" for="D">أيام للانتهاء</label><input class="field" id="D" inputmode="numeric" value="60"></div>
+      </div>
+      <details class="more" id="advBox"><summary>هدف الخروج والتذبذب (اختياري)</summary>
+        <div class="stack mt">
+          <div class="grid2">
+            <div><label class="lbl" for="T">سعر السهم المستهدف $</label><input class="field" id="T" inputmode="decimal" value="400"></div>
+            <div><label class="lbl" for="IV">التذبذب الضمني IV %</label><input class="field" id="IV" inputmode="decimal" value="55"></div>
+          </div>
+          <div class="grid2">
+            <div><label class="lbl" for="TD">بعد كم يوم تخرج؟</label><input class="field" id="TD" inputmode="numeric" value="30"></div>
+            <div><label class="lbl" for="X">أو سعر خروج يدوي للعقد</label><input class="field" id="X" inputmode="decimal" placeholder="تلقائي"></div>
+          </div>
+          <p class="hint" style="margin:0">IV تجده في سلسلة الخيارات بالتطبيق بجانب العقد. بدونه لا يمكن حساب دلتا وثيتا.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div class="card hero" id="hero"></div>
+  <div class="alerts" id="alerts"></div>
+
+  <div class="card">
+    <div class="card-h"><h2>الربح والخسارة حسب سعر السهم</h2><span class="hint">بعد الرسوم</span></div>
+    <div id="chart"></div>
+    <div class="legend"><span><i style="background:var(--accent)"></i>عند الانتهاء</span><span id="lgToday"><i style="background:var(--inc)"></i>يوم خروجك المخطط</span><span><i style="background:var(--warn)"></i>التعادل</span></div>
+  </div>
+
+  <div class="card" id="greeksCard">
+    <div class="card-h"><h2>الإغريقيات والاحتمالات</h2><span class="hint">نموذج بلاك-شولز تقديري</span></div>
+    <div class="kpis" id="greeks"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h2>تفصيل الرسوم</h2><span class="hint" id="feeHint"></span></div>
+    <div class="rows" id="fees"></div>
+    <div class="mt"><div class="hint" style="margin-bottom:5px">نسبة الرسوم من قيمة العقد (دخول وخروج)</div><div class="gauge"><i id="feeGauge"></i></div></div>
+  </div>
+
+  <button class="btn primary block" id="saveTrade">حفظ الصفقة في السجل</button>
+</section>
+
+<!-- ============ السجل ============ -->
+<section class="view" data-view="log" hidden>
+  <div class="card hero" id="logHero"></div>
+  <div class="card"><div class="card-h"><h2>صافي الأداء التراكمي</h2><span class="hint">بعد الرسوم</span></div><div id="eqChart"></div></div>
+  <div class="card"><div class="card-h"><h2>الصفقات</h2><div class="chips" id="logFilter"><button class="chip" data-f="all" aria-pressed="true">الكل</button><button class="chip" data-f="open" aria-pressed="false">مفتوحة</button><button class="chip" data-f="closed" aria-pressed="false">مغلقة</button></div></div><div id="trades"></div></div>
+  <div class="card"><div class="card-h"><h2>دروس من سجلك</h2></div><div class="alerts" id="lessons"></div></div>
+</section>
+
+<!-- ============ التحويل ============ -->
+<section class="view" data-view="fx" hidden>
+  <div class="card">
+    <div class="card-h"><h2>تحويل العملة</h2><span class="hint" id="fxHint"></span></div>
+    <div class="stack">
+      <div class="seg" id="fxDir"><button data-v="s2u" aria-pressed="true">من ريال إلى دولار</button><button data-v="u2s" aria-pressed="false">من دولار إلى ريال</button></div>
+      <div><label class="lbl" for="fxAmt" id="fxAmtLbl">المبلغ بالريال</label><input class="field" id="fxAmt" inputmode="decimal" value="1000"></div>
+    </div>
+  </div>
+  <div class="card hero" id="fxHero"></div>
+  <div class="card"><div class="card-h"><h2>تفصيل التحويل</h2></div><div class="rows" id="fxRows"></div></div>
+  <div class="card">
+    <div class="card-h"><h2>كم أودع لصفقة؟</h2></div>
+    <div class="stack">
+      <div class="grid2">
+        <div><label class="lbl" for="pcP">سعر العقد</label><input class="field" id="pcP" inputmode="decimal" value="5"></div>
+        <div><label class="lbl" for="pcN">عدد العقود</label><input class="field" id="pcN" inputmode="numeric" value="1"></div>
+      </div>
+      <div class="rows" id="pcRows"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-h"><h2>ريال ضائع في الطريق</h2><span class="hint">إيداع ثم سحب كامل</span></div>
+    <div class="rows" id="roundRows"></div>
+  </div>
+</section>
+
+<!-- ============ تعلّم ============ -->
+<section class="view" data-view="learn" hidden>
+  <div class="card">
+    <div class="card-h"><h2>قبل كل صفقة</h2><button class="btn" id="resetCheck">تصفير</button></div>
+    <div id="checklist"></div>
+    <div class="mt hint" id="checkScore"></div>
+  </div>
+  <div class="card"><div class="card-h"><h2>سؤال اليوم</h2><button class="btn" id="nextQ">سؤال آخر</button></div><div id="quiz"></div></div>
+  <div class="card acc"><div class="card-h"><h2>المصطلحات</h2></div><div id="glossary"></div></div>
+  <div class="card">
+    <div class="card-h"><h2>الضوابط الشرعية في أبيان</h2><span class="hint">قرار 11/25</span></div>
+    <div class="rows small">
+      <div class="row"><span>خيارات مفردة فقط، بدون استراتيجيات مركبة</span></div>
+      <div class="row"><span>على أسهم متوافقة مع الضوابط الشرعية</span></div>
+      <div class="row"><span>تسوية عينية بتسليم الأسهم</span></div>
+      <div class="row"><span>خيار أمريكي قابل للتنفيذ فورًا</span></div>
+      <div class="row"><span>بيع الكول يجب أن يكون مغطى بامتلاك الأسهم</span></div>
+    </div>
+  </div>
+  <p class="foot">مادة تعليمية وليست توصية مالية. المصادر: <a href="https://www.theocc.com/company-information/documents-and-archives/options-disclosure-document" target="_blank" rel="noopener">OCC</a> · <a href="https://www.optionseducation.org" target="_blank" rel="noopener">OIC</a> · <a href="https://www.sahmcapital.com/pricing" target="_blank" rel="noopener">أسعار سهم</a></p>
+</section>
+</main>
+
+<nav class="tabs" aria-label="الأقسام"><div class="tabs-in">
+  <button class="tab" data-tab="calc" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M8.5 7.5h7M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"/></svg>الحاسبة</button>
+  <button class="tab" data-tab="log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></svg>السجل</button>
+  <button class="tab" data-tab="fx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg>التحويل</button>
+  <button class="tab" data-tab="learn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4z"/><path d="M7 9v5c0 1.5 2.2 3 5 3s5-1.5 5-3V9"/></svg>تعلّم</button>
+</div></nav>
+
+<!-- إعدادات -->
+<div class="sheet" id="setSheet" hidden><div class="panel" role="dialog" aria-modal="true">
+  <div class="grab"></div><h3>الإعدادات والرسوم</h3>
+  <div class="stack">
+    <div><label class="lbl">المظهر</label><div class="seg" id="themeSeg"><button data-v="auto">تلقائي</button><button data-v="light">فاتح</button><button data-v="dark">داكن</button></div></div>
+    <div><label class="lbl" for="setBroker">عدّل رسوم وسيط</label><select class="field" id="setBroker"></select></div>
+    <div id="feeForm" class="stack"></div>
+    <p class="hint" id="feeNote" style="margin:0"></p>
+    <div class="grid2"><button class="btn" id="resetFees">استعادة الافتراضي</button><button class="btn primary" id="saveFees">حفظ</button></div>
+    <div class="grid2"><button class="btn" id="exportBtn">تصدير بياناتي</button><button class="btn" id="importBtn">استيراد</button></div>
+    <input type="file" id="importFile" accept="application/json" hidden>
+    <button class="btn" id="closeSet">إغلاق</button>
+  </div>
+</div></div>
+
+<!-- تفاصيل صفقة -->
+<div class="sheet" id="tradeSheet" hidden><div class="panel" role="dialog" aria-modal="true">
+  <div class="grab"></div><h3 id="tsTitle">الصفقة</h3>
+  <div class="stack">
+    <div class="rows" id="tsRows"></div>
+    <div class="grid2">
+      <div><label class="lbl" for="tsExit">سعر الخروج للعقد</label><input class="field" id="tsExit" inputmode="decimal" placeholder="0 = انتهى بلا قيمة"></div>
+      <div><label class="lbl" for="tsDate">تاريخ الإغلاق</label><input class="field" id="tsDate" type="date"></div>
+    </div>
+    <div><label class="lbl" for="tsNote">ملاحظة / سبب الدخول</label><input class="field txt" id="tsNote"></div>
+    <div class="grid2"><button class="btn primary" id="tsClose">إغلاق الصفقة</button><button class="btn" id="tsSaveNote">حفظ الملاحظة</button></div>
+    <div class="grid2"><button class="btn" id="tsReopen">إعادة فتح</button><button class="btn danger" id="tsDel">حذف</button></div>
+    <button class="btn" id="tsCancel">رجوع</button>
+  </div>
+</div></div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script>
+"use strict";
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const num=v=>{v=String(v??'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[٫,]/g,'.');const n=parseFloat(v);return isFinite(n)?n:NaN};
+const f2=(n,d=2)=>isFinite(n)?n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}):'—';
+const usd=(n,d=2)=>`<span class="num">${n<-0.004?'−':''}$${f2(Math.abs(n),d)}</span>`;
+const sar=(n,d=2)=>`<span><span class="num">${n<-0.004?'−':''}${f2(Math.abs(n),d)}</span> ر.س</span>`;
+const pct=(n,d=1)=>`<span class="num">${f2(n,d)}%</span>`;
+const sg=n=>n>0?'pos':n<0?'neg':'';
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const today=()=>{const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+const LS={get(k,d){try{const v=localStorage.getItem('opt_'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('opt_'+k,JSON.stringify(v))}catch(e){}}};
+function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>t.hidden=true,2200)}
+
+/* ---------- brokers ---------- */
+const FEE_FIELDS=[
+ ['commHi','عمولة/عقد (سعر العقد > 0.10)'],['minHi','حد أدنى للصفقة'],
+ ['commLo','عمولة/عقد (سعر العقد ≤ 0.10)'],['minLo','حد أدنى للصفقة (رخيص)'],
+ ['orf','ORF لكل عقد'],['occ','مقاصة OCC لكل عقد'],
+ ['taf','FINRA TAF لكل عقد (بيع)'],['sec','SEC % من القيمة (بيع)'],
+ ['vat','ضريبة القيمة المضافة % على الرسوم'],['fxRate','سعر الصرف الأساسي'],
+ ['fxSpread','هامش الوسيط على الصرف %'],['fxFee','رسم ثابت لكل تحويل (ر.س)']];
+const SAHM={name:'سهم',commHi:0.99,minHi:1.99,commLo:0.49,minLo:0.99,orf:0.0187,occ:0.02,taf:0.00329,sec:0.00206,vat:15,fxRate:3.75,fxSpread:0,fxFee:0,
+ note:'رسوم سهم من موقعهم الرسمي (تحديث 27 يناير 2026). هامش الصرف لم يُنشر بوضوح، أدخله من شاشة التحويل في التطبيق.'};
+const DEF_BROKERS={sahm:SAHM,abyan:{...SAHM,name:'أبيان',note:'هذه قيم مبدئية منسوخة من سهم. عدّلها من جدول رسوم أبيان أو من كشف أول صفقة.'},custom:{...SAHM,name:'مخصص',note:'أدخل رسوم أي وسيط آخر.'}};
+let brokers=LS.get('brokers',null)||structuredClone(DEF_BROKERS);
+for(const k in DEF_BROKERS) if(!brokers[k]) brokers[k]=structuredClone(DEF_BROKERS[k]);
+
+/* fees for one leg. side: 'buy'|'sell' */
+function legFees(b,price,n,side){
+  if(!(n>0))return {comm:0,reg:0,vat:0,total:0};
+  const lo=price<=0.1;
+  const comm=Math.max((lo?b.commLo:b.commHi)*n,lo?b.minLo:b.minHi);
+  let reg=b.orf*n+Math.min(b.occ*n,55);
+  if(side==='sell'){reg+=Math.max(b.taf*n,0.01)+Math.max(price*100*n*b.sec/100,0.01)}
+  const vat=(comm+reg)*b.vat/100;
+  return {comm,reg,vat,total:comm+reg+vat};
+}
+const fxBuyUSD=b=>b.fxRate*(1+b.fxSpread/100); // ريال لكل دولار عند الشراء
+const fxSellUSD=b=>b.fxRate*(1-b.fxSpread/100);
+
+/* ---------- Black-Scholes ---------- */
+function ncdf(x){const t=1/(1+.2316419*Math.abs(x)),d=.3989423*Math.exp(-x*x/2);let p=d*t*(.3193815+t*(-.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return x>0?1-p:p}
+const npdf=x=>Math.exp(-x*x/2)/Math.sqrt(2*Math.PI);
+function bs(type,S,K,days,iv,r=0.04){
+  const T=Math.max(days,0)/365;
+  if(T<=0||!(iv>0)){const v=type==='call'?Math.max(S-K,0):Math.max(K-S,0);return{price:v,delta:type==='call'?(S>K?1:0):(S<K?-1:0),theta:0,vega:0,itm:(type==='call'?S>K:S<K)?1:0}}
+  const s=iv/100,sq=Math.sqrt(T),d1=(Math.log(S/K)+(r+s*s/2)*T)/(s*sq),d2=d1-s*sq,disc=Math.exp(-r*T);
+  const price=type==='call'?S*ncdf(d1)-K*disc*ncdf(d2):K*disc*ncdf(-d2)-S*ncdf(-d1);
+  const delta=type==='call'?ncdf(d1):ncdf(d1)-1;
+  const th=-(S*npdf(d1)*s)/(2*sq)+(type==='call'?-r*K*disc*ncdf(d2):r*K*disc*ncdf(-d2));
+  return{price,delta,theta:th/365,vega:S*npdf(d1)*sq/100,itm:type==='call'?ncdf(d2):ncdf(-d2)};
+}
+function impliedVol(type,S,K,days,P){let lo=1,hi=400;if(!(P>0)||!(days>0))return NaN;for(let i=0;i<60;i++){const m=(lo+hi)/2;bs(type,S,K,days,m).price>P?hi=m:lo=m}return (lo+hi)/2}
+
+/* ---------- state ---------- */
+let st=Object.assign({type:'call',sym:'TSLA',broker:'sahm',S:'360',K:'380',P:'12.50',N:'1',D:'60',T:'400',IV:'55',TD:'30',X:''},LS.get('calc',{}));
+let trades=LS.get('trades',[]);
+const IDS=['sym','S','K','P','N','D','T','IV','TD','X'];
+
+function fillBrokerSelects(){
+  for(const id of ['#broker','#setBroker']){const el=$(id),cur=el.value||st.broker;el.innerHTML=Object.entries(brokers).map(([k,b])=>`<option value="${k}">${esc(b.name)}</option>`).join('');el.value=cur in brokers?cur:'sahm'}
+}
+
+/* ---------- calculator ---------- */
+function calc(){
+  const b=brokers[st.broker]||brokers.sahm, type=st.type;
+  const S=num(st.S),K=num(st.K),P=num(st.P),N=Math.max(1,Math.round(num(st.N)||1)),D=num(st.D);
+  const T=num(st.T),ivIn=num(st.IV),TD=Math.min(num(st.TD),D),Xm=num(st.X);
+  if(![S,K,P].every(v=>v>0)){$('#hero').innerHTML='<div class="k">أدخل سعر السهم وسعر التنفيذ وسعر العقد</div>';return}
+  const iv=ivIn>0?ivIn:impliedVol(type,S,K,D,P);
+  const cost=P*100*N, buyF=legFees(b,P,N,'buy');
+  const totalIn=cost+buyF.total;
+  const rate=fxBuyUSD(b);
+  // estimated exit price for the contract
+  let exitP,exitLabel;
+  if(Xm>=0&&st.X!==''){exitP=Xm;exitLabel='سعر خروج يدوي'}
+  else if(T>0){const left=isFinite(TD)?Math.max(D-TD,0):0;exitP=bs(type,T,K,left,iv).price;exitLabel=left>0?`تقدير عند ${f2(T)}$ بعد ${TD} يوم`:`عند الانتهاء والسهم ${f2(T)}$`}
+  const sellF=exitP>0?legFees(b,exitP,N,'sell'):{comm:0,reg:0,vat:0,total:0};
+  const gross=(exitP??0)*100*N-cost, net=gross-buyF.total-sellF.total;
+  // breakeven at expiry incl. both legs fees (approx sell fee at BE)
+  const perShareFees=(buyF.total+legFees(b,P,N,'sell').total)/(100*N);
+  const be=type==='call'?K+P+perShareFees:K-P-perShareFees;
+  const move=(be-S)/S*100;
+  const feesPct=(buyF.total+legFees(b,Math.max(exitP||P,0.01),N,'sell').total)/cost*100;
+  const g=bs(type,S,K,D,iv);
+  const moneyness=type==='call'?(S-K)/S*100:(K-S)/S*100;
+  const intrinsic=Math.max(type==='call'?S-K:K-S,0);
+
+  $('#brokerHint').textContent=`عبر ${b.name}`;
+  $('#hero').innerHTML=`<div class="k">تكلفة الدخول الكاملة</div>
+   <div class="v">${usd(totalIn)}</div><div class="s">≈ ${sar(totalIn*rate)} · منها رسوم ${usd(buyF.total)}</div>
+   <div class="tiles">
+    <div class="tile"><div class="k">نقطة التعادل بالرسوم</div><div class="v2">${usd(be)}</div></div>
+    <div class="tile"><div class="k">الحركة المطلوبة للسهم</div><div class="v2"><span class="num">${move>0?'+':''}${f2(move,1)}%</span></div></div>
+    <div class="tile"><div class="k">أقصى خسارة</div><div class="v2">${usd(-totalIn)}</div></div>
+    <div class="tile"><div class="k">${exitP!=null?'صافي المتوقع':'هدف الخروج'}</div><div class="v2">${exitP!=null?usd(net):'—'}</div></div>
+   </div>${exitP!=null?`<div class="s" style="margin-top:10px">${esc(exitLabel)}: العقد ≈ ${usd(exitP)} ← صافي ${sar(net*fxSellUSD(b))} (<span class="num">${f2(net/totalIn*100,0)}%</span>)</div>`:''}`;
+
+  // alerts
+  const A=[];
+  if(D<=7)A.push(['bad',`<b>ينتهي خلال ${D} أيام.</b> القيمة الزمنية تتبخر بسرعة، وهذه العقود تستنزف أغلب حسابات المبتدئين.`]);
+  else if(D<21)A.push(['warn',`<b>أقل من 21 يومًا.</b> ثيتا في أسرع مراحله، فالأفضل مدة 60 يومًا فأكثر.`]);
+  else if(D>=60)A.push(['good',`<b>مدة ${D} يومًا</b> تعطي السهم وقتًا كافيًا للتحرك.`]);
+  if(moneyness<-8)A.push(['bad',`<b>العقد بعيد عن المال ${f2(-moneyness,1)}%.</b> رخص سعره سببه ضعف فرصته.`]);
+  if(isFinite(g.delta)&&Math.abs(g.delta)<0.3)A.push(['warn',`<b>دلتا ${f2(Math.abs(g.delta))}</b> منخفضة. النطاق الأنسب للمبتدئ 0.50–0.70.`]);
+  if(feesPct>10)A.push(['bad',`<b>الرسوم تأكل ${f2(feesPct,0)}% من قيمة العقد.</b> ارفع حجم الصفقة أو اختر عقدًا أغلى، فالحد الأدنى للعمولة يضرب العقود الصغيرة.`]);
+  else if(feesPct>4)A.push(['warn',`الرسوم ≈ <b>${f2(feesPct,1)}%</b> من قيمة العقد ذهابًا وإيابًا.`]);
+  if(Math.abs(move)>(iv/100)*Math.sqrt(Math.max(D,1)/365)*100)A.push(['warn',`<b>التعادل يحتاج حركة أكبر من الحركة المتوقعة</b> التي يسعّرها السوق (±${f2((iv/100)*Math.sqrt(Math.max(D,1)/365)*100,1)}% خلال المدة).`]);
+  if(P<=0.10)A.push(['info','سعر العقد ≤ 0.10 فيُطبَّق عليه جدول العمولة المخفض للعقود الرخيصة.']);
+  $('#alerts').innerHTML=A.map(([c,t])=>`<div class="alert ${c}"><span class="dot"></span><div>${t}</div></div>`).join('');
+
+  // greeks
+  $('#greeksCard').hidden=!(iv>0);
+  if(iv>0){
+    const theo=g.price;
+    $('#greeks').innerHTML=[
+     ['دلتا',f2(g.delta),`العقد يتحرك ${usd(Math.abs(g.delta)*100*N)} مع كل 1$`],
+     ['ثيتا يوميًا',usd(g.theta*100*N),'خسارتك اليومية من الوقت'],
+     ['احتمال الانتهاء داخل المال',pct(g.itm*100,0),'تقديري حسب IV'],
+     ['فيغا',usd(g.vega*100*N),'أثر تغير IV بنقطة واحدة'],
+     ['القيمة الذاتية',usd(intrinsic),`والزمنية ${usd(Math.max(P-intrinsic,0))}`],
+     ['IV المستخدم',pct(iv,0),ivIn>0?'أدخلته يدويًا':'مستنتج من سعر العقد']
+    ].map(([k,v,s])=>`<div class="kpi"><div class="k">${k}</div><div class="v">${v}</div><div class="hint">${s}</div></div>`).join('');
+  }
+
+  // fees
+  const sellBE=legFees(b,exitP>0?exitP:P,N,'sell');
+  $('#feeHint').textContent=b.vat?`شامل ضريبة ${b.vat}%`:'';
+  $('#fees').innerHTML=`
+   <div class="row"><span class="k">قيمة العقود (${N} × 100 × ${f2(P)})</span>${usd(cost)}</div>
+   <div class="row"><span class="k">عمولة الشراء</span>${usd(buyF.comm)}</div>
+   <div class="row"><span class="k">رسوم تنظيمية (شراء)</span>${usd(buyF.reg,3)}</div>
+   ${b.vat?`<div class="row"><span class="k">ضريبة (شراء)</span>${usd(buyF.vat,3)}</div>`:''}
+   <div class="row"><span class="k">رسوم البيع ${exitP>0?'المتوقعة':'(بنفس السعر)'}</span>${usd(sellBE.total)}</div>
+   <div class="row tot"><span>مجموع الرسوم ذهابًا وإيابًا</span>${usd(buyF.total+sellBE.total)}</div>
+   <div class="row"><span class="k">سعر الصرف (شامل الهامش)</span><span class="num">${f2(rate,4)}</span></div>
+   <div class="row"><span class="k">تكلفة الدخول بالريال</span>${sar(totalIn*rate)}</div>`;
+  $('#feeGauge').style.width=Math.min(feesPct,100)+'%';
+  $('#feeGauge').style.background=feesPct>10?'var(--bad)':feesPct>4?'var(--warn)':'var(--accent)';
+
+  drawPayoff({type,S,K,P,N,D,iv,be,b,buyF,TD,T});
+  return {b,S,K,P,N,D,iv,be,totalIn};
+}
+
+function drawPayoff({type,S,K,P,N,D,iv,be,b,buyF,TD,T}){
+  const W=520,H=250,pl=44,pr=10,pt=14,pb=28;
+  const span=Math.max(Math.abs(S-K),S*0.12,Math.abs(be-S))*1.6;
+  const x0=Math.max(S-span,0.01),x1=S+span,steps=120;
+  const cost=P*100*N;
+  const pnlExp=s=>{const v=Math.max(type==='call'?s-K:K-s,0);return v*100*N-cost-buyF.total-(v>0?legFees(b,v,N,'sell').total:0)};
+  const left=Math.max(D-(isFinite(TD)?TD:0),0);
+  const pnlNow=s=>{const v=bs(type,s,K,left,iv).price;return v*100*N-cost-buyF.total-(v>0?legFees(b,v,N,'sell').total:0)};
+  const xs=[...Array(steps+1)].map((_,i)=>x0+(x1-x0)*i/steps);
+  const e=xs.map(pnlExp),n=iv>0&&left>0?xs.map(pnlNow):null;
+  let lo=Math.min(...e,...(n||[])),hi=Math.max(...e,...(n||[]));
+  hi=Math.min(hi,Math.max(-lo*4,cost*3));lo=Math.min(lo,0);hi=Math.max(hi,cost*.5);
+  const X=s=>pl+(s-x0)/(x1-x0)*(W-pl-pr),Y=v=>pt+(hi-Math.max(Math.min(v,hi),lo))/(hi-lo)*(H-pt-pb);
+  const path=a=>a.map((v,i)=>`${i?'L':'M'}${X(xs[i]).toFixed(1)},${Y(v).toFixed(1)}`).join('');
+  const css=getComputedStyle(document.documentElement),c=k=>css.getPropertyValue(k).trim();
+  const ticks=[lo,0,hi/2,hi].filter((v,i,a)=>a.indexOf(v)===i);
+  let g=`<svg class="chart" viewBox="0 0 ${W} ${H}" font-family="Readex Pro,system-ui" font-size="11">`;
+  g+=`<rect x="${pl}" y="${Y(0)}" width="${W-pl-pr}" height="${H-pb-Y(0)}" fill="${c('--bad-soft')}" opacity=".55"/>`;
+  g+=`<rect x="${pl}" y="${pt}" width="${W-pl-pr}" height="${Y(0)-pt}" fill="${c('--good-soft')}" opacity=".55"/>`;
+  for(const t of ticks)g+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(t)}" y2="${Y(t)}" stroke="${c('--line')}" ${t===0?'':'stroke-dasharray="3 4"'}/><text x="${pl-6}" y="${Y(t)+4}" text-anchor="end" fill="${c('--muted')}">${t<0?'−':''}$${Math.abs(t)>=1000?f2(Math.abs(t)/1000,1)+'k':f2(Math.abs(t),0)}</text>`;
+  g+=`<line x1="${X(K)}" x2="${X(K)}" y1="${pt}" y2="${H-pb}" stroke="${c('--muted')}" stroke-dasharray="4 4"/><text x="${X(K)}" y="${H-10}" text-anchor="middle" fill="${c('--muted')}">K ${f2(K,K%1?1:0)}</text>`;
+  g+=`<line x1="${X(S)}" x2="${X(S)}" y1="${pt}" y2="${H-pb}" stroke="${c('--ink-2')}" stroke-width="1.2"/><text x="${X(S)}" y="${pt+10}" text-anchor="middle" fill="${c('--ink')}" font-weight="600">الآن ${f2(S,0)}</text>`;
+  if(n)g+=`<path d="${path(n)}" fill="none" stroke="${c('--inc')}" stroke-width="2.4" stroke-dasharray="6 4"/>`;
+  g+=`<path d="${path(e)}" fill="none" stroke="${c('--accent')}" stroke-width="3" stroke-linejoin="round"/>`;
+  if(be>x0&&be<x1)g+=`<circle cx="${X(be)}" cy="${Y(0)}" r="5.5" fill="${c('--warn')}" stroke="${c('--surface')}" stroke-width="2"/><text x="${X(be)}" y="${Y(0)+(type==='call'?-10:18)}" text-anchor="middle" fill="${c('--warn')}" font-weight="600">${f2(be,1)}</text>`;
+  if(T>0&&T>x0&&T<x1)g+=`<line x1="${X(T)}" x2="${X(T)}" y1="${pt}" y2="${H-pb}" stroke="${c('--inc')}" stroke-width="1" opacity=".6"/><text x="${X(T)}" y="${H-10}" text-anchor="middle" fill="${c('--inc')}">هدف</text>`;
+  g+='</svg>';
+  $('#chart').innerHTML=g;$('#lgToday').hidden=!n;
+}
+
+/* ---------- journal ---------- */
+function tradeNet(t){
+  const b=brokers[t.broker]||brokers.sahm,cost=t.P*100*t.N,bf=legFees(b,t.P,t.N,'buy').total;
+  if(t.exit==null)return {net:null,fees:bf,cost:cost+bf};
+  const sf=t.exit>0?legFees(b,t.exit,t.N,'sell').total:0;
+  return {net:t.exit*100*t.N-cost-bf-sf,fees:bf+sf,cost:cost+bf,gross:t.exit*100*t.N-cost};
+}
+let logF='all';
+function renderLog(){
+  const b=brokers.sahm,rate=fxSellUSD(b);
+  const closed=trades.filter(t=>t.exit!=null).sort((a,c)=>(a.closed||'').localeCompare(c.closed||''));
+  const R=closed.map(t=>({t,...tradeNet(t)}));
+  const net=R.reduce((s,r)=>s+r.net,0),fees=trades.reduce((s,t)=>s+tradeNet(t).fees,0);
+  const wins=R.filter(r=>r.net>0).length,open=trades.filter(t=>t.exit==null);
+  const openCost=open.reduce((s,t)=>s+tradeNet(t).cost,0);
+  const avgW=wins?R.filter(r=>r.net>0).reduce((s,r)=>s+r.net,0)/wins:0,avgL=R.length-wins?R.filter(r=>r.net<=0).reduce((s,r)=>s+r.net,0)/(R.length-wins):0;
+  $('#logHero').innerHTML=`<div class="k">صافي الأرباح والخسائر المحققة</div><div class="v">${usd(net)}</div><div class="s">≈ ${sar(net*rate)} · ${closed.length} صفقة مغلقة</div>
+   <div class="tiles"><div class="tile"><div class="k">نسبة الفوز</div><div class="v2">${closed.length?pct(wins/closed.length*100,0):'—'}</div></div>
+   <div class="tile"><div class="k">مجموع ما دفعته رسومًا</div><div class="v2">${usd(fees)}</div></div>
+   <div class="tile"><div class="k">متوسط الربح · الخسارة</div><div class="v2"><span class="pos-l">${usd(avgW,0)}</span> · ${usd(avgL,0)}</div></div>
+   <div class="tile"><div class="k">مفتوحة (${open.length})</div><div class="v2">${usd(openCost)}</div></div></div>`;
+  // equity
+  if(R.length<2){$('#eqChart').innerHTML='<div class="empty">يظهر المنحنى بعد إغلاق صفقتين.</div>'}
+  else{const W=520,H=160,p=10;let c=0;const pts=[0,...R.map(r=>c+=r.net)];const lo=Math.min(...pts,0),hi=Math.max(...pts,0)||1;
+   const X=i=>W-p-i/(pts.length-1)*(W-2*p),Y=v=>p+(hi-v)/(hi-lo||1)*(H-2*p);const css=getComputedStyle(document.documentElement);
+   const col=c>=0?css.getPropertyValue('--good'):css.getPropertyValue('--bad');
+   $('#eqChart').innerHTML=`<svg class="chart" viewBox="0 0 ${W} ${H}"><line x1="${p}" x2="${W-p}" y1="${Y(0)}" y2="${Y(0)}" stroke="${css.getPropertyValue('--line')}"/><path d="${pts.map((v,i)=>`${i?'L':'M'}${X(i)},${Y(v)}`).join('')}" fill="none" stroke="${col}" stroke-width="3" stroke-linejoin="round"/>${pts.map((v,i)=>`<circle cx="${X(i)}" cy="${Y(v)}" r="3" fill="${col}"/>`).join('')}</svg><div class="hint">من اليمين (أول صفقة) إلى اليسار (آخر صفقة)</div>`}
+  // list
+  const list=trades.filter(t=>logF==='all'||(logF==='open'?t.exit==null:t.exit!=null)).sort((a,c)=>(c.date||'').localeCompare(a.date||''));
+  $('#trades').innerHTML=list.length?list.map(t=>{const r=tradeNet(t);return `<div class="trade" data-id="${t.id}"><div class="badge ${t.type}">${t.type==='call'?'CALL':'PUT'}</div>
+   <div><div class="t1"><span class="num">${esc(t.sym)} ${f2(t.K,t.K%1?1:0)}</span>${t.exit==null?'<span class="pill">مفتوحة</span>':''}</div><div class="t2">${t.N} × ${f2(t.P)} · ${esc(brokers[t.broker]?.name||'')} · ${esc(t.date||'')}</div></div>
+   <div class="amt ${r.net==null?'':sg(r.net)}">${r.net==null?usd(-r.cost):usd(r.net)}</div></div>`}).join(''):'<div class="empty">لا توجد صفقات بعد. احفظ صفقة من الحاسبة.</div>';
+  // lessons
+  const L=[];
+  if(closed.length){
+    const grossLoss=R.filter(r=>r.net<0).reduce((s,r)=>s+r.net,0);
+    if(fees>0&&net!==0)L.push(['info',`الرسوم تعادل <b>${f2(Math.abs(fees/(Math.abs(net)||1))*100,0)}%</b> من صافي نتيجتك.`]);
+    const short=R.filter(r=>(r.t.D||0)<14);
+    if(short.length){const sn=short.reduce((s,r)=>s+r.net,0);L.push([sn<0?'bad':'good',`صفقات أقل من 14 يومًا (${short.length}): صافي ${usd(sn)}.`])}
+    const longT=R.filter(r=>(r.t.D||0)>=45);
+    if(longT.length){const ln=longT.reduce((s,r)=>s+r.net,0);L.push([ln<0?'warn':'good',`صفقات 45 يومًا فأكثر (${longT.length}): صافي ${usd(ln)}.`])}
+    if(avgL&&avgW&&Math.abs(avgL)>avgW)L.push(['warn',`متوسط خسارتك أكبر من متوسط ربحك، فتحتاج نسبة فوز أعلى من <b>${f2(Math.abs(avgL)/(Math.abs(avgL)+avgW)*100,0)}%</b> لتتعادل.`]);
+    if(grossLoss<0&&R.some(r=>r.t.exit===0))L.push(['bad',`${R.filter(r=>r.t.exit===0).length} صفقة انتهت بلا قيمة. خطة خروج مسبقة كانت ستنقذ جزءًا منها.`]);
+  }
+  if(!L.length)L.push(['info','أغلق بعض الصفقات وسأستخرج لك أنماطًا من سجلك: المدة، والرسوم، ونسبة الفوز.']);
+  $('#lessons').innerHTML=L.map(([c,t])=>`<div class="alert ${c}"><span class="dot"></span><div>${t}</div></div>`).join('');
+}
+let curTrade=null;
+function openTrade(id){
+  const t=trades.find(x=>x.id===id);if(!t)return;curTrade=t;const r=tradeNet(t);
+  $('#tsTitle').innerHTML=`<span class="num">${esc(t.sym)} ${t.type==='call'?'CALL':'PUT'} ${f2(t.K,t.K%1?1:0)}</span>`;
+  $('#tsRows').innerHTML=`<div class="row"><span class="k">العقود × سعر الدخول</span><span class="num">${t.N} × ${f2(t.P)}</span></div>
+   <div class="row"><span class="k">سعر السهم عند الدخول</span>${usd(t.S)}</div><div class="row"><span class="k">أيام للانتهاء عند الدخول</span><span class="num">${t.D}</span></div>
+   <div class="row"><span class="k">التكلفة مع رسوم الشراء</span>${usd(r.cost)}</div>
+   ${t.exit!=null?`<div class="row"><span class="k">سعر الخروج</span>${usd(t.exit)}</div><div class="row"><span class="k">الرسوم الكلية</span>${usd(r.fees)}</div><div class="row tot"><span>الصافي</span><span class="${sg(r.net)}">${usd(r.net)}</span></div>`:''}`;
+  $('#tsExit').value=t.exit??'';$('#tsDate').value=t.closed||today();$('#tsNote').value=t.note||'';
+  $('#tsClose').hidden=t.exit!=null;$('#tsReopen').hidden=t.exit==null;$('#tradeSheet').hidden=false;
+}
+const saveTrades=()=>{LS.set('trades',trades);renderLog()};
+
+/* ---------- FX ---------- */
+let fxDir='s2u';
+function renderFX(){
+  const b=brokers[st.broker]||brokers.sahm,a=num($('#fxAmt').value)||0;
+  $('#fxHint').textContent=`أسعار ${b.name}`;
+  $('#fxAmtLbl').textContent=fxDir==='s2u'?'المبلغ بالريال':'المبلغ بالدولار';
+  let out,rows;
+  if(fxDir==='s2u'){const r=fxBuyUSD(b),after=Math.max(a-b.fxFee,0),u=after/r,lost=a-u*b.fxRate;
+    out=`<div class="k">تستلم في حسابك الأمريكي</div><div class="v">${usd(u)}</div><div class="s">بسعر ${f2(r,4)} ريال لكل دولار</div>`;
+    rows=`<div class="row"><span class="k">السعر الرسمي (ربط ساما)</span><span class="num">${f2(b.fxRate,4)}</span></div><div class="row"><span class="k">هامش الوسيط</span>${pct(b.fxSpread,2)}</div><div class="row"><span class="k">رسم ثابت</span>${sar(b.fxFee)}</div><div class="row tot"><span>تكلفة التحويل الفعلية</span>${sar(lost)}</div>`}
+  else{const r=fxSellUSD(b),s=a*r-b.fxFee,lost=a*b.fxRate-s;
+    out=`<div class="k">تستلم بالريال</div><div class="v">${sar(s)}</div><div class="s">بسعر ${f2(r,4)} ريال لكل دولار</div>`;
+    rows=`<div class="row"><span class="k">السعر الرسمي (ربط ساما)</span><span class="num">${f2(b.fxRate,4)}</span></div><div class="row"><span class="k">هامش الوسيط</span>${pct(b.fxSpread,2)}</div><div class="row"><span class="k">رسم ثابت</span>${sar(b.fxFee)}</div><div class="row tot"><span>تكلفة التحويل الفعلية</span>${sar(lost)}</div>`}
+  $('#fxHero').innerHTML=out;$('#fxRows').innerHTML=rows;
+  const P=num($('#pcP').value)||0,N=Math.max(1,Math.round(num($('#pcN').value)||1)),bf=legFees(b,P,N,'buy').total,need=P*100*N+bf,r=fxBuyUSD(b);
+  $('#pcRows').innerHTML=`<div class="row"><span class="k">قيمة العقود</span>${usd(P*100*N)}</div><div class="row"><span class="k">رسوم الشراء</span>${usd(bf)}</div><div class="row tot"><span>تحتاج بالدولار</span>${usd(need)}</div><div class="row tot"><span>تودع بالريال تقريبًا</span>${sar(need*r+b.fxFee)}</div>`;
+  const R=1000,u=(R-b.fxFee)/fxBuyUSD(b),back=u*fxSellUSD(b)-b.fxFee;
+  $('#roundRows').innerHTML=`<div class="row"><span class="k">تودع</span>${sar(R)}</div><div class="row"><span class="k">تستلم بالدولار</span>${usd(u)}</div><div class="row"><span class="k">تسحبها مباشرة بالريال</span>${sar(back)}</div><div class="row tot"><span>تكلفة الذهاب والعودة</span><span class="${back<R?'neg':''}">${sar(R-back)}</span></div>`;
+}
+
+/* ---------- learn ---------- */
+const CHECK=['عندي سبب مكتوب للحركة المتوقعة، لا مجرد إحساس','المدة 60 يومًا فأكثر','دلتا بين 0.50 و0.70','نقطة التعادل بالرسوم واقعية خلال المدة','أعرف هل توجد نتائج مالية قبل الانتهاء (IV Crush)','فرق Bid/Ask ضيق والعقد له سيولة','الصفقة لا تتجاوز 10% من رأس مال الخيارات','حددت سعر جني الربح ووقف الخسارة مسبقًا','سأستخدم أمر محدد Limit لا أمر السوق','السهم ضمن الأسهم المتوافقة شرعيًا في وسيطي'];
+let checks=LS.get('checks',[]);
+function renderCheck(){
+  $('#checklist').innerHTML=CHECK.map((c,i)=>`<label class="check"><input type="checkbox" data-i="${i}" ${checks[i]?'checked':''}><span>${c}</span></label>`).join('');
+  const n=checks.filter(Boolean).length;
+  $('#checkScore').innerHTML=n===CHECK.length?'<b class="pos">جاهز. الصفقة اجتازت كل البنود.</b>':`${n} من ${CHECK.length}. ${n<7?'<span class="neg">لا تدخل قبل إكمال البنود.</span>':'قريب.'}`;
+}
+const GLOSS=[['الكول Call','حق شراء 100 سهم بسعر التنفيذ حتى تاريخ الانتهاء. تشتريه عند توقع الصعود.'],['البوت Put','حق بيع 100 سهم بسعر التنفيذ. تشتريه عند توقع الهبوط.'],['العلاوة Premium','ثمن العقد × 100. هي أقصى خسارة لمشتري العقد.'],['سعر التنفيذ Strike','السعر المتفق عليه للشراء أو البيع.'],['ITM / ATM / OTM','داخل المال، عند المال، خارج المال. العقد الخارج عن المال كله قيمة زمنية.'],['القيمة الذاتية','ما يساويه العقد لو نُفِّذ الآن. الباقي من سعره قيمة زمنية تتآكل.'],['دلتا Delta','تغير سعر العقد مع كل 1$ في السهم، وتقريب لاحتمال انتهائه داخل المال.'],['ثيتا Theta','ما يخسره العقد يوميًا من الوقت. يتسارع في آخر 30 يومًا.'],['فيغا Vega','حساسية العقد لتغير التذبذب الضمني IV.'],['IV Crush','انهيار التذبذب الضمني بعد النتائج. قد تصيب الاتجاه وتخسر.'],['Bid / Ask','أعلى سعر شراء وأقل سعر بيع. تبيع على الـBid وتشتري على الـAsk.'],['الكول المغطى','تملك 100 سهم وتبيع كول عليها لتحصل دخلًا. الصيغة الوحيدة المسموحة لبيع الكول في أبيان.'],['البوت الحامي','تملك السهم وتشتري بوت كتأمين ضد الهبوط الحاد.'],['التخصيص Assignment','حين يُنفَّذ العقد على بائعه فيلتزم بالتسليم أو الاستلام.']];
+const QUIZ=[
+ {q:'السهم 200$ واشتريت كول 210 بعلاوة 4$. ما التعادل عند الانتهاء (بدون رسوم)؟',o:['206$','210$','214$','204$'],a:2,e:'التعادل للكول = سعر التنفيذ + العلاوة = 214$.'},
+ {q:'بوت 95 بعلاوة 2$، والسهم انتهى عند 85$. كم صافي الربح لعقد واحد بدون رسوم؟',o:['1000$','800$','200$','1200$'],a:1,e:'القيمة الذاتية 10$ ناقص العلاوة 2$ = 8$ × 100 = 800$.'},
+ {q:'أي العقود يتآكل أسرع بسبب الوقت؟',o:['ينتهي بعد 120 يومًا','ينتهي بعد 7 أيام','ينتهي بعد 60 يومًا','لا فرق'],a:1,e:'ثيتا يتسارع كلما اقترب الانتهاء، خاصة في آخر 30 يومًا.'},
+ {q:'دلتا العقد 0.60. السهم ارتفع 2$. كم يتغير سعر العقد تقريبًا؟',o:['+0.60','+1.20','+2.00','+0.30'],a:1,e:'0.60 × 2 = 1.20 للسهم الواحد، أي 120$ للعقد.'},
+ {q:'اشتريت كول قبل النتائج وصعد السهم قليلًا لكن العقد نزل. السبب الأرجح؟',o:['خطأ في التطبيق','انهيار التذبذب IV Crush','الدلتا سالبة','العمولة'],a:1,e:'التذبذب الضمني ينهار بعد إعلان النتائج فيسحب قيمة العقد.'},
+ {q:'عقد سعره 0.21 في سهم بحد أدنى للعمولة 1.99$. كم تقريبًا نسبة رسوم الذهاب والإياب من قيمته؟',o:['2%','5%','20%','50%'],a:2,e:'نحو 4$ رسوم على عقد قيمته 21$، أي قرابة 20%.'},
+ {q:'ما أقصى خسارة لمشتري البوت؟',o:['غير محدودة','العلاوة المدفوعة + الرسوم','سعر التنفيذ × 100','لا يخسر'],a:1,e:'المشتري لا يخسر أكثر مما دفع.'}];
+let qi=LS.get('qi',0);
+function renderQuiz(){const Q=QUIZ[qi%QUIZ.length];$('#quiz').innerHTML=`<div style="font-weight:600">${Q.q}</div>${Q.o.map((o,i)=>`<button class="btn quiz-opt" data-i="${i}">${o}</button>`).join('')}<div id="qexp" class="hint mt" hidden></div>`}
+
+/* ---------- wiring ---------- */
+function saveState(){LS.set('calc',st)}
+function bindCalc(){
+  for(const id of IDS){const el=$('#'+id);el.value=st[id]??'';el.addEventListener('input',()=>{st[id]=el.value;saveState();calc()})}
+  $('#broker').addEventListener('change',e=>{st.broker=e.target.value;saveState();calc();renderFX()});
+  $$('#cpSeg button').forEach(b=>b.onclick=()=>{st.type=b.dataset.v;$$('#cpSeg button').forEach(x=>x.setAttribute('aria-pressed',x===b));saveState();calc()});
+  $$('#cpSeg button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===st.type));
+  $('#saveTrade').onclick=()=>{
+    const t={id:Date.now().toString(36),type:st.type,sym:(st.sym||'').toUpperCase().trim()||'—',broker:st.broker,S:num(st.S),K:num(st.K),P:num(st.P),N:Math.max(1,Math.round(num(st.N)||1)),D:num(st.D)||0,iv:num(st.IV)||null,date:today(),exit:null};
+    if(!(t.K>0&&t.P>0))return toast('أكمل بيانات الصفقة أولًا');
+    trades.push(t);saveTrades();toast('حُفظت في السجل');
+  };
+}
+function go(tab){$$('.view').forEach(v=>v.hidden=v.dataset.view!==tab);$$('.tab').forEach(t=>t.setAttribute('aria-current',t.dataset.tab===tab?'page':'false'));window.scrollTo(0,0);LS.set('tab',tab);
+  if(tab==='log')renderLog();if(tab==='fx')renderFX();if(tab==='calc')calc()}
+$$('.tab').forEach(t=>t.onclick=()=>go(t.dataset.tab));
+$$('#logFilter .chip').forEach(c=>c.onclick=()=>{logF=c.dataset.f;$$('#logFilter .chip').forEach(x=>x.setAttribute('aria-pressed',x===c));renderLog()});
+$('#trades').onclick=e=>{const r=e.target.closest('.trade');if(r)openTrade(r.dataset.id)};
+$('#tsCancel').onclick=()=>$('#tradeSheet').hidden=true;
+$('#tsClose').onclick=()=>{const x=num($('#tsExit').value);if(!(x>=0))return toast('أدخل سعر الخروج (0 إذا انتهى بلا قيمة)');curTrade.exit=x;curTrade.closed=$('#tsDate').value;curTrade.note=$('#tsNote').value;saveTrades();$('#tradeSheet').hidden=true;toast('أُغلقت الصفقة')};
+$('#tsSaveNote').onclick=()=>{curTrade.note=$('#tsNote').value;saveTrades();toast('حُفظت الملاحظة')};
+$('#tsReopen').onclick=()=>{curTrade.exit=null;curTrade.closed=null;saveTrades();$('#tradeSheet').hidden=true};
+$('#tsDel').onclick=()=>{if(!confirm('حذف الصفقة نهائيًا؟'))return;trades=trades.filter(t=>t!==curTrade);saveTrades();$('#tradeSheet').hidden=true};
+$$('#fxDir button').forEach(b=>b.onclick=()=>{fxDir=b.dataset.v;$$('#fxDir button').forEach(x=>x.setAttribute('aria-pressed',x===b));renderFX()});
+['#fxAmt','#pcP','#pcN'].forEach(s=>$(s).addEventListener('input',renderFX));
+$('#checklist').onchange=e=>{const i=e.target.dataset.i;if(i==null)return;checks[i]=e.target.checked;LS.set('checks',checks);renderCheck()};
+$('#resetCheck').onclick=()=>{checks=[];LS.set('checks',checks);renderCheck()};
+$('#quiz').onclick=e=>{const b=e.target.closest('.quiz-opt');if(!b)return;const Q=QUIZ[qi%QUIZ.length],i=+b.dataset.i;$$('.quiz-opt').forEach((x,j)=>{x.disabled=true;if(j===Q.a)x.classList.add('ok');else if(j===i)x.classList.add('no')});const ex=$('#qexp');ex.hidden=false;ex.innerHTML=(i===Q.a?'<b class="pos">صحيح.</b> ':'<b class="neg">ليست هذه.</b> ')+Q.e};
+$('#nextQ').onclick=()=>{qi++;LS.set('qi',qi);renderQuiz()};
+$('#glossary').innerHTML=GLOSS.map(([k,v])=>`<details><summary>${k}</summary><p>${v}</p></details>`).join('');
+
+/* settings */
+function applyTheme(t){if(t==='auto')document.documentElement.removeAttribute('data-theme');else document.documentElement.dataset.theme=t;$$('#themeSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===t));LS.set('theme',t);calc()}
+$$('#themeSeg button').forEach(b=>b.onclick=()=>applyTheme(b.dataset.v));
+function renderFeeForm(){const k=$('#setBroker').value,b=brokers[k];
+  $('#feeForm').innerHTML=`<div><label class="lbl">اسم الوسيط</label><input class="field txt" data-k="name" value="${esc(b.name)}"></div><div class="grid2">${FEE_FIELDS.map(([f,l])=>`<div><label class="lbl">${l}</label><input class="field" data-k="${f}" inputmode="decimal" value="${b[f]}"></div>`).join('')}</div>`;
+  $('#feeNote').textContent=b.note||''}
+$('#setBroker').onchange=renderFeeForm;
+$('#openSettings').onclick=()=>{$('#setBroker').value=st.broker;renderFeeForm();$('#setSheet').hidden=false};
+$('#closeSet').onclick=()=>$('#setSheet').hidden=true;
+$('#saveFees').onclick=()=>{const k=$('#setBroker').value,b=brokers[k];$$('#feeForm input').forEach(i=>{const f=i.dataset.k;b[f]=f==='name'?(i.value.trim()||b.name):(num(i.value)||0)});if(!(b.fxRate>0))b.fxRate=3.75;LS.set('brokers',brokers);fillBrokerSelects();calc();renderFX();toast('حُفظت الرسوم')};
+$('#resetFees').onclick=()=>{const k=$('#setBroker').value;brokers[k]=structuredClone(DEF_BROKERS[k]);LS.set('brokers',brokers);fillBrokerSelects();renderFeeForm();calc();toast('أُعيدت القيم الافتراضية')};
+$('#exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify({v:1,brokers,trades,calc:st},null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`khiyarati-${today()}.json`;a.click()};
+$('#importBtn').onclick=()=>$('#importFile').click();
+$('#importFile').onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text());if(d.brokers)brokers=d.brokers;if(Array.isArray(d.trades))trades=d.trades;LS.set('brokers',brokers);LS.set('trades',trades);fillBrokerSelects();calc();renderLog();toast('تم الاستيراد')}catch(err){toast('الملف غير صالح')}};
+$$('.sheet').forEach(s=>s.addEventListener('click',e=>{if(e.target===s)s.hidden=true}));
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>calc());
+
+/* init */
+fillBrokerSelects();$('#broker').value=st.broker;bindCalc();applyTheme(LS.get('theme','auto'));renderCheck();renderQuiz();go(LS.get('tab','calc'));
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
