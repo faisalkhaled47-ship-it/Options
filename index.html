@@ -194,6 +194,7 @@ details.more summary::-webkit-details-marker{display:none}
     </div>
   </div>
   <div class="card hero" id="qHero"></div>
+  <div class="alerts" id="qCap"></div>
   <div class="card" id="qTblCard"><div class="card-h"><h2>بكم أبيع؟</h2><span class="hint">الصافي بعد كل الرسوم</span></div><div id="qTbl"></div></div>
   <div class="card"><div class="card-h"><h2>مثل كشف سهم</h2></div><div class="rows" id="qRows"></div></div>
   <button class="btn primary block" id="qSave">حفظ في السجل</button>
@@ -259,6 +260,9 @@ details.more summary::-webkit-details-marker{display:none}
 
 <!-- ============ السجل ============ -->
 <section class="view" data-view="log" hidden>
+  <div class="card"><div class="card-h"><h2>رأس المال</h2><span class="hint">المبلغ الذي أودعته للتداول</span></div>
+    <div class="grid2"><div><label class="lbl" for="capUsd">بالدولار</label><input class="field" id="capUsd" inputmode="decimal" placeholder="مثلًا 40"></div>
+    <div><label class="lbl" for="capSar">أو بالريال</label><input class="field" id="capSar" inputmode="decimal" placeholder="مثلًا 150"></div></div></div>
   <div class="card hero" id="logHero"></div>
   <div class="card"><div class="card-h"><h2>صافي الأداء التراكمي</h2><span class="hint">بعد الرسوم</span></div><div id="eqChart"></div></div>
   <div class="card"><div class="card-h"><h2>الصفقات</h2><div class="chips" id="logFilter"><button class="chip" data-f="all" aria-pressed="true">الكل</button><button class="chip" data-f="open" aria-pressed="false">مفتوحة</button><button class="chip" data-f="closed" aria-pressed="false">مغلقة</button></div></div><div id="trades"></div></div>
@@ -563,11 +567,12 @@ function renderLog(){
   const wins=R.filter(r=>r.net>0).length,open=trades.filter(t=>t.exit==null);
   const openCost=open.reduce((s,t)=>s+tradeNet(t).cost,0);
   const avgW=wins?R.filter(r=>r.net>0).reduce((s,r)=>s+r.net,0)/wins:0,avgL=R.length-wins?R.filter(r=>r.net<=0).reduce((s,r)=>s+r.net,0)/(R.length-wins):0;
-  $('#logHero').innerHTML=`<div class="k">صافي الأرباح والخسائر المحققة</div><div class="v">${usd(net)}</div><div class="s">≈ ${sar(net*rate)} · ${closed.length} صفقة مغلقة</div>
+  const cap=num(LS.get('cap',''));
+  $('#logHero').innerHTML=`<div class="k">صافي الأرباح والخسائر المحققة${cap>0?` · عائد ${f2(net/cap*100,1)}% على رأس المال`:''}</div><div class="v">${usd(net)}</div><div class="s">${closed.length} صفقة مغلقة</div>
    <div class="tiles"><div class="tile"><div class="k">نسبة الفوز</div><div class="v2">${closed.length?pct(wins/closed.length*100,0):'—'}</div></div>
    <div class="tile"><div class="k">مجموع ما دفعته رسومًا</div><div class="v2">${usd(fees)}</div></div>
-   <div class="tile"><div class="k">متوسط الربح · الخسارة</div><div class="v2"><span class="pos-l">${usd(avgW,0)}</span> · ${usd(avgL,0)}</div></div>
-   <div class="tile"><div class="k">مفتوحة (${open.length})</div><div class="v2">${usd(openCost)}</div></div></div>`;
+   ${cap>0?`<div class="tile"><div class="k">رصيدك الآن</div><div class="v2">${usd(cap+net)}</div></div>`:`<div class="tile"><div class="k">متوسط الربح</div><div class="v2">${usd(avgW)}</div></div>`}
+   ${cap>0?`<div class="tile"><div class="k">رأس المال</div><div class="v2">${usd(cap)}</div></div>`:`<div class="tile"><div class="k">مفتوحة (${open.length})</div><div class="v2">${usd(openCost)}</div></div>`}</div>`;
   // equity
   if(R.length<2){$('#eqChart').innerHTML='<div class="empty">يظهر المنحنى بعد إغلاق صفقتين.</div>'}
   else{const W=520,H=160,p=10;let c=0;const pts=[0,...R.map(r=>c+=r.net)];const lo=Math.min(...pts,0),hi=Math.max(...pts,0)||1;
@@ -664,11 +669,12 @@ function sellTable(b,B,N,paid,be,Sl){
 function renderSimple(){
   const b=brokers.sahm,B=num($('#qBuy').value),Sl=num($('#qSell').value),N=Math.max(1,Math.round(num($('#qN').value)||1));
   LS.set('simple',{b:$('#qBuy').value,s:$('#qSell').value,n:$('#qN').value,y:$('#qSym').value});
-  if(!(B>0)){$('#qHero').innerHTML='<div class="k">اكتب السعر الذي اشتريت به العقد</div><div class="s">مثال: 0.18</div>';$('#qRows').innerHTML='';$('#qTbl').innerHTML='<div class="empty">اكتب سعر الشراء ليظهر جدول البيع</div>';return}
+  if(!(B>0)){$('#qCap').innerHTML='';$('#qHero').innerHTML='<div class="k">اكتب السعر الذي اشتريت به العقد</div><div class="s">مثال: 0.18</div>';$('#qRows').innerHTML='';$('#qTbl').innerHTML='<div class="empty">اكتب سعر الشراء ليظهر جدول البيع</div>';return}
   const bf=legFees(b,B,N,'buy'),paid=B*100*N+bf.total,rate=b.fxRate;
   // breakeven sell price
   let be=B;for(let i=0;i<2000;i++){const sf=legFees(b,be,N,'sell');if(be*100*N-sf.total>=paid)break;be+=0.01}
   $('#qTbl').innerHTML=sellTable(b,B,N,paid,be,$('#qSell').value===''?-1:Sl);
+  const cap=num(LS.get('cap',''));$('#qCap').innerHTML=cap>0?`<div class="alert ${paid/cap>0.5?'bad':paid/cap>0.1?'warn':'good'}"><span class="dot"></span><div>هذه الصفقة <b>${f2(paid/cap*100,0)}%</b> من رأس مالك (${usd(cap,2,1)}). ${paid/cap>0.1?'القاعدة الشائعة: لا تتجاوز 5–10% في صفقة واحدة.':'ضمن الحد الآمن.'}</div></div>`:`<div class="alert info"><span class="dot"></span><div>أدخل رأس مالك في تبويب «السجل» لترى نسبة الصفقة منه.</div></div>`;
   if(!(Sl>=0)||$('#qSell').value===''){
     $('#qHero').innerHTML=`<div class="k">دفعت</div><div class="v">${usd(paid)}</div>
      <div class="tiles"><div class="tile"><div class="k">لا تخسر إذا بعت بـ</div><div class="v2"><span class="num">${f2(be)}</span> أو أعلى</div></div><div class="tile"><div class="k">إذا انتهى بلا قيمة تخسر</div><div class="v2">${usd(-paid)}</div></div></div>`;
@@ -735,6 +741,12 @@ $('#importFile').onchange=async e=>{try{const d=JSON.parse(await e.target.files[
 $$('.sheet').forEach(s=>s.addEventListener('click',e=>{if(e.target===s)s.hidden=true}));
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>calc());
 
+
+
+/* ---------- capital ---------- */
+(()=>{const u=$('#capUsd'),r=$('#capSar'),c=num(LS.get('cap',''));if(c>0){u.value=+c.toFixed(2);r.value=+(c*RATE()).toFixed(2)}
+ u.oninput=()=>{const v=num(u.value);LS.set('cap',v>0?v:'');r.value=v>0?+(v*RATE()).toFixed(2):'';renderLog();renderSimple()};
+ r.oninput=()=>{const v=num(r.value)/RATE();LS.set('cap',v>0?v:'');u.value=v>0?+v.toFixed(2):'';renderLog();renderSimple()};})();
 
 /* ---------- header: hide, refresh ---------- */
 let hideM=LS.get('hide',false);document.documentElement.classList.toggle('hide-money',hideM);
