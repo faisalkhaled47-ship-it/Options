@@ -125,6 +125,7 @@ details.more summary::-webkit-details-marker{display:none}
 .kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .kpi{background:var(--surface-2);border-radius:12px;padding:10px 12px}
 .kpi .k{font-size:12px;color:var(--ink-2)} .kpi .v{font-family:var(--f-display);font-size:19px;font-weight:600}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th{font-size:12px;color:var(--muted);font-weight:500;text-align:right;padding:6px 4px;border-bottom:1px solid var(--line)}.tbl td{padding:9px 4px;border-bottom:1px dashed var(--line)}.tbl tr.be td{background:var(--warn-soft);font-weight:600}.tbl tr.cur td{background:var(--accent-soft);font-weight:600}.tbl td:first-child{font-weight:600}
 .empty{text-align:center;color:var(--muted);padding:26px 10px;font-size:14px}
 /* learn */
 .acc details{border-bottom:1px solid var(--line);padding:10px 0}
@@ -182,6 +183,7 @@ details.more summary::-webkit-details-marker{display:none}
     </div>
   </div>
   <div class="card hero" id="qHero"></div>
+  <div class="card" id="qTblCard"><div class="card-h"><h2>بكم أبيع؟</h2><span class="hint">الصافي بعد كل الرسوم</span></div><div id="qTbl"></div></div>
   <div class="card"><div class="card-h"><h2>مثل كشف سهم</h2></div><div class="rows" id="qRows"></div></div>
   <button class="btn primary block" id="qSave">حفظ في السجل</button>
 </section>
@@ -622,13 +624,26 @@ function renderQuiz(){const Q=QUIZ[qi%QUIZ.length];$('#quiz').innerHTML=`<div st
 
 
 /* ---------- simple ---------- */
+function sellTable(b,B,N,paid,be,Sl){
+  const net=x=>x*100*N-(x>0?legFees(b,x,N,'sell').total:0)-paid;
+  const rows=[['انتهى بلا قيمة',0],['وقف خسارة −40%',B*0.6],['نفس سعر الشراء',B],['التعادل (أقل سعر بلا خسارة)',be],['ربح 25%+',null,0.25],['ربح 50%+',null,0.5],['ضعف المبلغ',null,1],['3 أضعاف',null,2]];
+  // price that gives target net % of paid
+  const tgt=p=>{let x=be;while(net(x)<paid*p&&x<1e4)x+=0.01;return x};
+  const out=rows.map(([l,x,p])=>{const px=x??tgt(p);return {l,px:Math.round(px*100)/100}});
+  if(Sl>=0&&!out.some(r=>Math.abs(r.px-Sl)<0.005))out.push({l:'سعر بيعك',px:Sl});
+  out.sort((a,c)=>a.px-c.px);
+  return `<table class="tbl"><tr><th>الحالة</th><th>تبيع بـ</th><th>الصافي</th><th>%</th></tr>${out.map(r=>{const n=net(r.px);return `<tr class="${r.l==='التعادل (أقل سعر بلا خسارة)'?'be':''} ${Sl>=0&&Math.abs(r.px-Sl)<0.005?'cur':''}"><td>${r.l}</td><td><span class="num">${f2(r.px)}</span></td><td class="${sg(n)}">${usd(n)}</td><td class="${sg(n)}"><span class="num">${f2(n/paid*100,0)}%</span></td></tr>`}).join('')}</table>
+  <p class="hint" style="margin:8px 0 0">${N} عقد · دفعت ${usd(paid)} شاملة رسوم الشراء. السطر المظلل بالأخضر هو بيعك الفعلي.</p>`;
+}
+
 function renderSimple(){
   const b=brokers.sahm,B=num($('#qBuy').value),Sl=num($('#qSell').value),N=Math.max(1,Math.round(num($('#qN').value)||1));
   LS.set('simple',{b:$('#qBuy').value,s:$('#qSell').value,n:$('#qN').value,y:$('#qSym').value});
-  if(!(B>0)){$('#qHero').innerHTML='<div class="k">اكتب السعر الذي اشتريت به العقد</div><div class="s">مثال: 0.18</div>';$('#qRows').innerHTML='';return}
+  if(!(B>0)){$('#qHero').innerHTML='<div class="k">اكتب السعر الذي اشتريت به العقد</div><div class="s">مثال: 0.18</div>';$('#qRows').innerHTML='';$('#qTbl').innerHTML='<div class="empty">اكتب سعر الشراء ليظهر جدول البيع</div>';return}
   const bf=legFees(b,B,N,'buy'),paid=B*100*N+bf.total,rate=b.fxRate;
   // breakeven sell price
   let be=B;for(let i=0;i<2000;i++){const sf=legFees(b,be,N,'sell');if(be*100*N-sf.total>=paid)break;be+=0.01}
+  $('#qTbl').innerHTML=sellTable(b,B,N,paid,be,$('#qSell').value===''?-1:Sl);
   if(!(Sl>=0)||$('#qSell').value===''){
     $('#qHero').innerHTML=`<div class="k">دفعت</div><div class="v">${usd(paid)}</div><div class="s">≈ ${sar(paid*rate)}</div>
      <div class="tiles"><div class="tile"><div class="k">لا تخسر إذا بعت بـ</div><div class="v2"><span class="num">${f2(be)}</span> أو أعلى</div></div><div class="tile"><div class="k">إذا انتهى بلا قيمة تخسر</div><div class="v2">${usd(-paid)}</div></div></div>`;
