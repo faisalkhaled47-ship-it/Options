@@ -131,6 +131,7 @@ details.more summary::-webkit-details-marker{display:none}
 .tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th{font-size:12px;color:var(--muted);font-weight:500;text-align:right;padding:6px 4px;border-bottom:1px solid var(--line)}.tbl td{padding:9px 4px;border-bottom:1px dashed var(--line)}.tbl tr.be td{background:var(--warn-soft);font-weight:600}.tbl tr.cur td{background:var(--accent-soft);font-weight:600}.tbl td:first-child{font-weight:600}
 .money{display:inline-flex;flex-direction:column;align-items:flex-end;line-height:1.2;vertical-align:middle}.money .sar{font-size:.68em;opacity:.72;font-weight:500;direction:rtl;white-space:nowrap}.hero .v .money .sar{font-size:.42em}.hero .v .money{align-items:flex-start}.tile .money,.kpi .money{align-items:flex-start}
 .hide-money .money,.hide-money .hero .v,.hide-money .tile .v2,.hide-money .kpi .v,.hide-money .amt{filter:blur(9px)}
+.vd-h{display:flex;align-items:center;gap:12px;margin-bottom:10px}.vd-score{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:20px;flex:none}.vd-score.good{background:var(--good-soft);color:var(--good)}.vd-score.warn{background:var(--warn-soft);color:var(--warn)}.vd-score.bad{background:var(--bad-soft);color:var(--bad)}.vd-t{font-family:var(--f-display);font-weight:600;font-size:16.5px}.vd-s{font-size:13.5px;color:var(--ink-2)}.sug{display:flex;gap:10px;padding:10px 0;border-top:1px dashed var(--line);font-size:14px;line-height:1.6}.sug .n{width:22px;height:22px;border-radius:7px;background:var(--accent-soft);color:var(--accent-strong);display:grid;place-items:center;font-size:12px;font-weight:700;flex:none;margin-top:1px}
 .empty{text-align:center;color:var(--muted);padding:26px 10px;font-size:14px}
 /* learn */
 .acc details{border-bottom:1px solid var(--line);padding:10px 0}
@@ -203,7 +204,7 @@ details.more summary::-webkit-details-marker{display:none}
 <!-- ============ الحاسبة ============ -->
 <section class="view" data-view="calc" hidden>
   <div class="card">
-    <div class="card-h"><h2>الصفقة</h2><span class="hint" id="brokerHint"></span></div>
+    <div class="card-h"><h2>افحص عقدًا قبل شرائه</h2><span class="hint" id="brokerHint"></span></div>
     <div class="stack">
       <div class="seg cp" id="cpSeg"><button data-v="call" aria-pressed="true">كول · صعود</button><button data-v="put" aria-pressed="false">بوت · هبوط</button></div>
       <div class="grid2">
@@ -235,8 +236,9 @@ details.more summary::-webkit-details-marker{display:none}
     </div>
   </div>
 
+  <div class="card" id="verdict"></div>
   <div class="card hero" id="hero"></div>
-  <div class="alerts" id="alerts"></div>
+  <div class="alerts" id="alerts" hidden></div>
 
   <div class="card">
     <div class="card-h"><h2>الربح والخسارة حسب سعر السهم</h2><span class="hint">بعد الرسوم</span></div>
@@ -446,7 +448,7 @@ function calc(){
   const b=brokers[st.broker]||brokers.sahm, type=st.type;
   const S=num(st.S),K=num(st.K),P=num(st.P),N=Math.max(1,Math.round(num(st.N)||1)),D=num(st.D);
   const T=num(st.T),ivIn=num(st.IV),TD=Math.min(num(st.TD),D),Xm=num(st.X);
-  if(![S,K,P].every(v=>v>0)){$('#hero').innerHTML='<div class="k">أدخل سعر السهم وسعر التنفيذ وسعر العقد</div>';return}
+  if(![S,K,P].every(v=>v>0)){$('#hero').innerHTML='<div class="k">أدخل سعر السهم وسعر التنفيذ وسعر العقد</div>';verdict();return}
   const iv=ivIn>0?ivIn:impliedVol(type,S,K,D,P);
   const cost=P*100*N, buyF=legFees(b,P,N,'buy');
   const totalIn=cost+buyF.total;
@@ -518,7 +520,7 @@ function calc(){
   $('#feeGauge').style.width=Math.min(feesPct,100)+'%';
   $('#feeGauge').style.background=feesPct>10?'var(--bad)':feesPct>4?'var(--warn)':'var(--accent)';
 
-  drawPayoff({type,S,K,P,N,D,iv,be,b,buyF,TD,T});
+  drawPayoff({type,S,K,P,N,D,iv,be,b,buyF,TD,T});verdict();
   return {b,S,K,P,N,D,iv,be,totalIn};
 }
 
@@ -550,6 +552,49 @@ function drawPayoff({type,S,K,P,N,D,iv,be,b,buyF,TD,T}){
   if(T>0&&T>x0&&T<x1)g+=`<line x1="${X(T)}" x2="${X(T)}" y1="${pt}" y2="${H-pb}" stroke="${c('--inc')}" stroke-width="1" opacity=".6"/><text x="${X(T)}" y="${H-10}" text-anchor="middle" fill="${c('--inc')}">هدف</text>`;
   g+='</svg>';
   $('#chart').innerHTML=g;$('#lgToday').hidden=!n;
+}
+
+
+/* ---------- analyst verdict ---------- */
+function findStrikeForDelta(type,S,D,iv,target){let best=null,bd=9;for(let k=S*0.5;k<=S*1.5;k+=S*0.0025){const d=Math.abs(bs(type,S,k,D,iv).delta);if(Math.abs(d-target)<bd){bd=Math.abs(d-target);best=k}}return best}
+function verdict(){
+  const b=brokers[st.broker]||brokers.sahm,type=st.type,S=num(st.S),K=num(st.K),P=num(st.P),N=Math.max(1,Math.round(num(st.N)||1)),D=num(st.D);
+  const el=$('#verdict');
+  if(![S,K,P].every(v=>v>0)||!(D>=0)){el.innerHTML=`<h2 style="margin:0 0 8px">رأي المحلل</h2><p class="small muted" style="margin:0">هذه الشاشة تفحص عقدًا <b>قبل أن تشتريه</b>. افتح العقد في سهم وانقل منه 4 أرقام: <b>سعر السهم</b>، <b>سعر التنفيذ</b>، <b>سعر العقد</b>، و<b>عدد الأيام للانتهاء</b>. وسأعطيك تقييمًا واقتراحات بالأرقام.</p>`;return}
+  const iv=num(st.IV)>0?num(st.IV):impliedVol(type,S,K,D,P),g=bs(type,S,K,D,iv);
+  const bf=legFees(b,P,N,'buy'),sfe=legFees(b,P,N,'sell'),cost=P*100*N,paid=cost+bf.total,feesPct=(bf.total+sfe.total)/cost*100;
+  const be=type==='call'?K+P+(bf.total+sfe.total)/(100*N):K-P-(bf.total+sfe.total)/(100*N),move=(be-S)/S*100,expMove=(iv/100)*Math.sqrt(Math.max(D,1)/365)*100;
+  const cap=num(LS.get('cap','')),share=cap>0?paid/cap*100:null,dl=Math.abs(g.delta);
+  let score=100;const sug=[],pros=[];
+  // time
+  if(D<7){score-=35;sug.push(`<b>المدة قصيرة جدًا (${D} يوم).</b> اختر عقدًا ينتهي بعد <b>45–90 يومًا</b>. ${D<=1?'العقد سيفقد كل قيمته الزمنية خلال ساعات.':`ثيتا الآن يأكل ${usd(Math.min(Math.abs(g.theta*100*N),cost),2,1)} يوميًا من عقدك.`}`)}
+  else if(D<21){score-=20;sug.push(`<b>المدة ${D} يومًا أقل من المريح.</b> العقد بعد 45–90 يومًا أغلى قليلًا لكنه يعطي السهم وقتًا ويخفف خسارة الوقت اليومية.`)}
+  else pros.push(`مدة ${D} يومًا كافية`);
+  // delta
+  if(iv>0&&dl<0.3){score-=20;const D2=Math.max(D,45),k=findStrikeForDelta(type,S,D2,iv,0.6),kp=bs(type,S,k,D2,iv).price;sug.push(`<b>العقد بعيد عن السعر (دلتا ${f2(dl)}).</b> احتمال انتهائه رابحًا ≈ ${f2(g.itm*100,0)}% فقط. البديل الأقوى: سعر تنفيذ قرب <b>${f2(k,1)}</b> لمدة ${D2} يومًا، دلتا ≈0.60، وسعره التقريبي <b>${f2(kp)}</b> أي ${usd(kp*100,0,1)} للعقد${cap>0&&kp*100>cap?'، وهذا أكبر من رأس مالك الحالي':''}.`)}
+  else if(iv>0&&dl>=0.45)pros.push(`دلتا ${f2(dl)} مناسبة`);
+  // breakeven vs expected
+  if(Math.abs(move)>expMove){score-=15;sug.push(`<b>التعادل يحتاج حركة ${f2(Math.abs(move),1)}%</b> بينما السوق يسعّر حركة متوقعة ±${f2(expMove,1)}% فقط خلال المدة. أنت تراهن على حركة أكبر من المتوقع.`)}
+  else pros.push(`التعادل (${f2(move,1)}%) ضمن الحركة المتوقعة`);
+  // fees
+  if(feesPct>10){score-=15;let n2=N;while(n2<50&&(legFees(b,P,n2,'buy').total+legFees(b,P,n2,'sell').total)/(P*100*n2)*100>5)n2++;
+    sug.push(`<b>الرسوم ${f2(feesPct,0)}% من قيمة العقد.</b> ${n2<50?`مع ${n2} عقود تنزل تحت 5%، أو`:''} اختر عقدًا سعره أعلى من 0.50 حتى لا تأكل العمولة الدنيا 1.99$ ربحك.`)}
+  else pros.push(`الرسوم ${f2(feesPct,1)}% مقبولة`);
+  // size
+  if(share!=null&&share>10){score-=share>40?20:10;const maxN=Math.max(0,Math.floor(cap*0.1/(P*100)));sug.push(`<b>الصفقة ${f2(share,0)}% من رأس مالك.</b> الحد الآمن 5–10%، أي حوالي ${usd(cap*0.1,0,1)}. ${maxN<1?'رأس مالك الحالي صغير على هذا العقد، فالأفضل عقد أرخص بمدة أطول، أو التجربة على الحساب التجريبي.':''}`)}
+  else if(share!=null)pros.push(`حجم الصفقة ${f2(share,0)}% من رأس المال`);
+  if(share==null)sug.push('أدخل رأس مالك في تبويب «السجل» لأقيّم حجم الصفقة.');
+  // exit plan
+  let tp=P*1.5,sl=P*0.6;sug.push(`<b>خطة خروج مقترحة قبل الدخول:</b> بيع عند <b>${f2(tp)}</b> (+50%) أو وقف عند <b>${f2(sl)}</b> (−40%)، والخروج قبل الانتهاء بـ21 يومًا مهما كانت النتيجة. ضعها كأوامر محددة في سهم فور الشراء.`);
+  score=Math.max(0,Math.min(100,score));
+  const cls=score>=70?'good':score>=45?'warn':'bad',t=score>=70?'صفقة منظمة':score>=45?'مقبولة بشروط':'ضعيفة كما هي';
+  const need=type==='call'?`يرتفع السهم فوق <b>${f2(be)}</b>`:`ينزل السهم تحت <b>${f2(be)}</b>`;
+  el.innerHTML=`<div class="vd-h"><div class="vd-score ${cls}">${score}</div><div><div class="vd-t">رأي المحلل: ${t}</div><div class="vd-s">لتربح عند الانتهاء يجب أن ${need} (${move>0?'+':''}${f2(move,1)}%) خلال ${D} يوم.</div></div></div>
+   ${pros.length?`<div class="chips" style="margin-bottom:6px">${pros.map(p=>`<span class="chip" style="cursor:default;background:var(--good-soft);border-color:transparent;color:var(--good)">✓ ${p}</span>`).join('')}</div>`:''}
+   ${sug.map((x,i)=>`<div class="sug"><span class="n">${i+1}</span><div>${x}</div></div>`).join('')}
+   <button class="btn block mt" id="askAI" type="button">✦ اطلب رأي Claude المفصّل</button>
+   <p class="hint" style="margin:8px 0 0">التقييم يعتمد على هيكل الصفقة (المدة، السعر، الرسوم، الحجم)، ولا يعرف اتجاه السوق. القرار لك.</p>`;
+  $('#askAI').onclick=()=>{$('#aiSheet').hidden=false;aiAsk(`حلّل هذا العقد قبل أن أشتريه كمحلل محترف: ${st.sym} ${type==='call'?'كول':'بوت'}، سعر السهم ${S}، سعر التنفيذ ${K}، سعر العقد ${P}، ${N} عقد، ${D} يومًا للانتهاء، IV ${f2(iv,0)}%، دلتا ${f2(g.delta)}، ثيتا يومي ${f2(g.theta*100*N)}$، التعادل ${f2(be)} (${f2(move,1)}%)، الرسوم ${f2(feesPct,1)}%، ${share!=null?`الصفقة ${f2(share,0)}% من رأس مال ${f2(cap)}$`:'رأس المال غير محدد'}. أعطني: تقييمًا صريحًا، وما الذي يجب أن يحدث لأربح، وبدائل أفضل في الهيكل (مدة/سعر تنفيذ/حجم) بالأرقام، وخطة خروج.`)};
 }
 
 /* ---------- journal ---------- */
