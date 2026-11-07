@@ -141,7 +141,7 @@ details.more summary::-webkit-details-marker{display:none}
 .quiz-opt.ok{background:var(--good-soft);border-color:var(--good)} .quiz-opt.no{background:var(--bad-soft);border-color:var(--bad)}
 /* tabs */
 .tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
-.tabs-in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+.tabs-in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
 .tab{appearance:none;border:0;background:none;color:var(--muted);font-size:11.5px;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0 7px;cursor:pointer}
 .tab svg{width:23px;height:23px}
 .tab[aria-current="page"]{color:var(--accent)}
@@ -167,8 +167,27 @@ details.more summary::-webkit-details-marker{display:none}
 
 <main class="wrap">
 
+<section class="view" data-view="simple">
+  <div class="card">
+    <div class="card-h"><h2>صفقتي</h2><span class="hint">برسوم سهم</span></div>
+    <div class="stack">
+      <div class="grid2">
+        <div><label class="lbl" for="qBuy">اشتريت العقد بـ</label><input class="field" id="qBuy" inputmode="decimal" placeholder="0.18"></div>
+        <div><label class="lbl" for="qSell">بعته بـ</label><input class="field" id="qSell" inputmode="decimal" placeholder="0.30"></div>
+      </div>
+      <div class="grid2">
+        <div><label class="lbl" for="qN">عدد العقود</label><input class="field" id="qN" inputmode="numeric" value="1"></div>
+        <div><label class="lbl" for="qSym">الرمز (اختياري)</label><input class="field" id="qSym" placeholder="TSLA" autocapitalize="characters"></div>
+      </div>
+    </div>
+  </div>
+  <div class="card hero" id="qHero"></div>
+  <div class="card"><div class="card-h"><h2>مثل كشف سهم</h2></div><div class="rows" id="qRows"></div></div>
+  <button class="btn primary block" id="qSave">حفظ في السجل</button>
+</section>
+
 <!-- ============ الحاسبة ============ -->
-<section class="view" data-view="calc">
+<section class="view" data-view="calc" hidden>
   <div class="card">
     <div class="card-h"><h2>الصفقة</h2><span class="hint" id="brokerHint"></span></div>
     <div class="stack">
@@ -284,7 +303,8 @@ details.more summary::-webkit-details-marker{display:none}
 </main>
 
 <nav class="tabs" aria-label="الأقسام"><div class="tabs-in">
-  <button class="tab" data-tab="calc" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M8.5 7.5h7M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"/></svg>الحاسبة</button>
+  <button class="tab" data-tab="simple" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-10"/></svg>صفقتي</button>
+  <button class="tab" data-tab="calc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M8.5 7.5h7M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"/></svg>تحليل</button>
   <button class="tab" data-tab="log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></svg>السجل</button>
   <button class="tab" data-tab="fx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg>التحويل</button>
   <button class="tab" data-tab="learn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4z"/><path d="M7 9v5c0 1.5 2.2 3 5 3s5-1.5 5-3V9"/></svg>تعلّم</button>
@@ -529,8 +549,8 @@ function renderLog(){
    $('#eqChart').innerHTML=`<svg class="chart" viewBox="0 0 ${W} ${H}"><line x1="${p}" x2="${W-p}" y1="${Y(0)}" y2="${Y(0)}" stroke="${css.getPropertyValue('--line')}"/><path d="${pts.map((v,i)=>`${i?'L':'M'}${X(i)},${Y(v)}`).join('')}" fill="none" stroke="${col}" stroke-width="3" stroke-linejoin="round"/>${pts.map((v,i)=>`<circle cx="${X(i)}" cy="${Y(v)}" r="3" fill="${col}"/>`).join('')}</svg><div class="hint">من اليمين (أول صفقة) إلى اليسار (آخر صفقة)</div>`}
   // list
   const list=trades.filter(t=>logF==='all'||(logF==='open'?t.exit==null:t.exit!=null)).sort((a,c)=>(c.date||'').localeCompare(a.date||''));
-  $('#trades').innerHTML=list.length?list.map(t=>{const r=tradeNet(t);return `<div class="trade" data-id="${t.id}"><div class="badge ${t.type}">${t.type==='call'?'CALL':'PUT'}</div>
-   <div><div class="t1"><span class="num">${esc(t.sym)} ${f2(t.K,t.K%1?1:0)}</span>${t.exit==null?'<span class="pill">مفتوحة</span>':''}</div><div class="t2">${t.N} × ${f2(t.P)} · ${esc(brokers[t.broker]?.name||'')} · ${esc(t.date||'')}</div></div>
+  $('#trades').innerHTML=list.length?list.map(t=>{const r=tradeNet(t);return `<div class="trade" data-id="${t.id}"><div class="badge ${t.K?t.type:'call'}">${t.K?(t.type==='call'?'CALL':'PUT'):'عقد'}</div>
+   <div><div class="t1"><span class="num">${esc(t.sym)}${t.K?' '+f2(t.K,t.K%1?1:0):''}</span>${t.exit==null?'<span class="pill">مفتوحة</span>':''}</div><div class="t2">${t.N} × ${f2(t.P)} · ${esc(brokers[t.broker]?.name||'')} · ${esc(t.date||'')}</div></div>
    <div class="amt ${r.net==null?'':sg(r.net)}">${r.net==null?usd(-r.cost):usd(r.net)}</div></div>`}).join(''):'<div class="empty">لا توجد صفقات بعد. احفظ صفقة من الحاسبة.</div>';
   // lessons
   const L=[];
@@ -600,6 +620,33 @@ const QUIZ=[
 let qi=LS.get('qi',0);
 function renderQuiz(){const Q=QUIZ[qi%QUIZ.length];$('#quiz').innerHTML=`<div style="font-weight:600">${Q.q}</div>${Q.o.map((o,i)=>`<button class="btn quiz-opt" data-i="${i}">${o}</button>`).join('')}<div id="qexp" class="hint mt" hidden></div>`}
 
+
+/* ---------- simple ---------- */
+function renderSimple(){
+  const b=brokers.sahm,B=num($('#qBuy').value),Sl=num($('#qSell').value),N=Math.max(1,Math.round(num($('#qN').value)||1));
+  LS.set('simple',{b:$('#qBuy').value,s:$('#qSell').value,n:$('#qN').value,y:$('#qSym').value});
+  if(!(B>0)){$('#qHero').innerHTML='<div class="k">اكتب السعر الذي اشتريت به العقد</div><div class="s">مثال: 0.18</div>';$('#qRows').innerHTML='';return}
+  const bf=legFees(b,B,N,'buy'),paid=B*100*N+bf.total,rate=b.fxRate;
+  // breakeven sell price
+  let be=B;for(let i=0;i<2000;i++){const sf=legFees(b,be,N,'sell');if(be*100*N-sf.total>=paid)break;be+=0.01}
+  if(!(Sl>=0)||$('#qSell').value===''){
+    $('#qHero').innerHTML=`<div class="k">دفعت</div><div class="v">${usd(paid)}</div><div class="s">≈ ${sar(paid*rate)}</div>
+     <div class="tiles"><div class="tile"><div class="k">لا تخسر إذا بعت بـ</div><div class="v2"><span class="num">${f2(be)}</span> أو أعلى</div></div><div class="tile"><div class="k">إذا انتهى بلا قيمة تخسر</div><div class="v2">${usd(-paid)}</div></div></div>`;
+    $('#qRows').innerHTML=`<div class="row"><span class="k">قيمة العقد</span>${usd(B*100*N)}</div><div class="row"><span class="k">العمولة</span>${usd(bf.comm)}</div><div class="row"><span class="k">رسوم الطرف الثالث</span>${usd(bf.reg)}</div><div class="row"><span class="k">ضريبة القيمة المضافة</span>${usd(bf.vat)}</div><div class="row tot"><span>إجمالي ما دفعته</span>${usd(paid)}</div>`;return}
+  const sf=Sl>0?legFees(b,Sl,N,'sell'):{comm:0,reg:0,vat:0,total:0},got=Sl*100*N-sf.total,net=got-paid,fees=bf.total+sf.total;
+  $('#qHero').innerHTML=`<div class="k">${net>=0?'ربحك الصافي':'خسارتك الصافية'}</div><div class="v">${usd(net)}</div><div class="s">≈ ${sar(net*rate)} · بعد كل الرسوم</div>
+   <div class="tiles"><div class="tile"><div class="k">دفعت</div><div class="v2">${usd(paid)}</div></div><div class="tile"><div class="k">استلمت</div><div class="v2">${usd(got)}</div></div>
+   <div class="tile"><div class="k">مجموع الرسوم</div><div class="v2">${usd(fees)}</div></div><div class="tile"><div class="k">نقطة التعادل</div><div class="v2"><span class="num">${f2(be)}</span></div></div></div>`;
+  $('#qRows').innerHTML=`<div class="row"><span class="k"><b>الشراء</b> · قيمة العقد</span>${usd(B*100*N)}</div><div class="row"><span class="k">العمولة</span>${usd(bf.comm)}</div><div class="row"><span class="k">رسوم الطرف الثالث</span>${usd(bf.reg)}</div><div class="row"><span class="k">الضريبة</span>${usd(bf.vat)}</div><div class="row tot"><span>إجمالي الشراء</span>${usd(paid)}</div>
+   <div class="row"><span class="k"><b>البيع</b> · قيمة العقد</span>${usd(Sl*100*N)}</div><div class="row"><span class="k">العمولة</span>${usd(sf.comm)}</div><div class="row"><span class="k">رسوم الطرف الثالث</span>${usd(sf.reg)}</div><div class="row"><span class="k">الضريبة</span>${usd(sf.vat)}</div><div class="row tot"><span>إجمالي البيع</span>${usd(got)}</div>
+   <div class="row tot"><span>الصافي</span><span class="${sg(net)}">${usd(net)}</span></div>`;
+}
+(()=>{const q=LS.get('simple',{});$('#qBuy').value=q.b||'';$('#qSell').value=q.s||'';$('#qN').value=q.n||'1';$('#qSym').value=q.y||'';
+ ['#qBuy','#qSell','#qN','#qSym'].forEach(x=>$(x).addEventListener('input',renderSimple));
+ $('#qSave').onclick=()=>{const B=num($('#qBuy').value),Sl=num($('#qSell').value);if(!(B>0))return toast('اكتب سعر الشراء');
+  trades.push({id:Date.now().toString(36),type:'put',sym:($('#qSym').value||'—').toUpperCase(),broker:'sahm',S:0,K:0,P:B,N:Math.max(1,Math.round(num($('#qN').value)||1)),D:0,date:today(),exit:Sl>=0&&$('#qSell').value!==''?Sl:null,closed:today()});
+  saveTrades();toast('حُفظت في السجل')}})();
+
 /* ---------- wiring ---------- */
 function saveState(){LS.set('calc',st)}
 function bindCalc(){
@@ -614,7 +661,7 @@ function bindCalc(){
   };
 }
 function go(tab){$$('.view').forEach(v=>v.hidden=v.dataset.view!==tab);$$('.tab').forEach(t=>t.setAttribute('aria-current',t.dataset.tab===tab?'page':'false'));window.scrollTo(0,0);LS.set('tab',tab);
-  if(tab==='log')renderLog();if(tab==='fx')renderFX();if(tab==='calc')calc()}
+  if(tab==='log')renderLog();if(tab==='fx')renderFX();if(tab==='calc')calc();if(tab==='simple')renderSimple()}
 $$('.tab').forEach(t=>t.onclick=()=>go(t.dataset.tab));
 $$('#logFilter .chip').forEach(c=>c.onclick=()=>{logF=c.dataset.f;$$('#logFilter .chip').forEach(x=>x.setAttribute('aria-pressed',x===c));renderLog()});
 $('#trades').onclick=e=>{const r=e.target.closest('.trade');if(r)openTrade(r.dataset.id)};
@@ -649,7 +696,7 @@ $$('.sheet').forEach(s=>s.addEventListener('click',e=>{if(e.target===s)s.hidden=
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>calc());
 
 /* init */
-fillBrokerSelects();$('#broker').value=st.broker;bindCalc();applyTheme(LS.get('theme','auto'));renderCheck();renderQuiz();go(LS.get('tab','calc'));
+fillBrokerSelects();$('#broker').value=st.broker;bindCalc();applyTheme(LS.get('theme','auto'));renderCheck();renderQuiz();go('simple');
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
