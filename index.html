@@ -384,7 +384,7 @@ details.more summary::-webkit-details-marker{display:none}
 
 <script>
 "use strict";
-const APP_VER='1.10',APP_BUILT='2026-11-07';
+const APP_VER='1.11',APP_BUILT='2026-11-07';
 /* ---------- helpers ---------- */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const num=v=>{v=String(v??'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[٫,]/g,'.');const n=parseFloat(v);return isFinite(n)?n:NaN};
@@ -603,7 +603,7 @@ function verdict(){
    ${sug.map((x,i)=>`<div class="sug"><span class="n">${i+1}</span><div>${x}</div></div>`).join('')}
    <button class="btn block mt" id="askAI" type="button">✦ اطلب رأي Claude المفصّل</button>
    <p class="hint" style="margin:8px 0 0">التقييم يعتمد على هيكل الصفقة (المدة، السعر، الرسوم، الحجم)، ولا يعرف اتجاه السوق. القرار لك.</p>`;
-  $('#askAI').onclick=()=>{$('#aiSheet').hidden=false;aiAsk(`حلّل هذا العقد قبل أن أشتريه كمحلل محترف: ${st.sym} ${type==='call'?'كول':'بوت'}، سعر السهم ${S}، سعر التنفيذ ${K}، سعر العقد ${P}، ${N} عقد، ${D} يومًا للانتهاء، IV ${f2(iv,0)}%، دلتا ${f2(g.delta)}، ثيتا يومي ${f2(g.theta*100*N)}$، التعادل ${f2(be)} (${f2(move,1)}%)، الرسوم ${f2(feesPct,1)}%، ${share!=null?`الصفقة ${f2(share,0)}% من رأس مال ${f2(cap)}$`:'رأس المال غير محدد'}. أعطني: تقييمًا صريحًا، وما الذي يجب أن يحدث لأربح، وبدائل أفضل في الهيكل (مدة/سعر تنفيذ/حجم) بالأرقام، وخطة خروج.`)};
+  $('#askAI').onclick=()=>{$('#aiSheet').hidden=false;aiAsk(`حلّل هذا العقد قبل أن أشتريه كمحلل محترف: ${st.sym} ${type==='call'?'كول':'بوت'}، سعر السهم ${S}، سعر التنفيذ ${K}، سعر العقد ${P}، ${N} عقد، ${D} يومًا للانتهاء، IV ${f2(iv,0)}%، دلتا ${f2(g.delta)}، ثيتا يومي ${D<=1?'(العقد ينتهي اليوم، يفقد قيمته الزمنية كاملة)':f2(Math.max(g.theta*100*N,-cost))+'$'}، التعادل ${f2(be)} (${f2(move,1)}%)، الرسوم ${f2(feesPct,1)}%، ${share!=null?`الصفقة ${f2(share,0)}% من رأس مال ${f2(cap)}$`:'رأس المال غير محدد'}. أعطني: تقييمًا صريحًا، وما الذي يجب أن يحدث لأربح، وبدائل أفضل في الهيكل (مدة/سعر تنفيذ/حجم) بالأرقام، وخطة خروج.`)};
 }
 
 /* ---------- journal ---------- */
@@ -816,18 +816,33 @@ const AI_MODELS=[['claude-sonnet-5-5','Sonnet 5.5 · متوازن (مستحسن)
 const aiCfg=()=>{const own=LS.get('ai',{});if(!own.key){try{const m=JSON.parse(localStorage.getItem('masrufi.ai.v1')||'{}');if(m.key)return {key:m.key,model:own.model||m.model}}catch(e){}}return own};
 const aiModel=()=>aiCfg().model||AI_MODELS[0][0];
 let aiMsgs=[],aiCtl=null;
-function aiErrMsg(c,m){return c==='nokey'?'أضف مفتاح Claude API من الإعدادات ⚙️ أولًا.':c===401?'مفتاح API غير صحيح.':c===429?'تجاوزت حد الطلبات أو نفد الرصيد. انتظر قليلًا.':(c===529||c===503||c===500)?'خدمة Claude مزدحمة، أعد المحاولة.':c===404?'اسم النموذج غير معروف، اختر نموذجًا آخر.':c==='net'?'لا يوجد اتصال بالإنترنت.':c==='stop'?'أُوقف.':(m||String(c))}
+function aiErrMsg(c,m){return c==='nokey'?'أضف مفتاح Claude API من الإعدادات ⚙️ أولًا.':c===401?'مفتاح API غير صحيح.':c===429?'تجاوزت حد الطلبات أو نفد الرصيد. انتظر قليلًا.':(c===529||c===503||c===500)?'خدمة Claude مزدحمة، أعد المحاولة.':c===404?'اسم النموذج غير معروف، اختر نموذجًا آخر.':c==='net'?'لا يوجد اتصال بالإنترنت.':c==='stop'?'أُوقف.':c==='timeout'?'تأخر الرد أكثر من 90 ثانية. أعد المحاولة أو اختر Haiku.':c==='empty'?'وصل رد فارغ. أعد المحاولة.':(m||String(c))}
 async function aiCall(system,messages,onText){
   const key=(aiCfg().key||'').trim();if(!key)throw {code:'nokey'};
-  aiCtl=new AbortController();let r;
-  try{r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',signal:aiCtl.signal,cache:'no-store',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:aiModel(),max_tokens:1600,stream:true,system,messages})})}
-  catch(e){throw {code:e.name==='AbortError'?'stop':'net'}}
-  if(!r.ok){let m='';try{m=JSON.parse(await r.text()).error.message}catch(e){}throw {code:r.status,msg:m}}
-  const rd=r.body.getReader(),dec=new TextDecoder();let buf='',out='';
-  for(;;){const x=await rd.read();if(x.done)break;buf+=dec.decode(x.value,{stream:true});const L=buf.split('\n');buf=L.pop();
-    for(const ln of L){if(!ln.startsWith('data:'))continue;let ev;try{ev=JSON.parse(ln.slice(5))}catch(e){continue}
-      if(ev.type==='content_block_delta'&&ev.delta?.type==='text_delta'){out+=ev.delta.text;onText(out)}}}
-  return out;
+  aiCtl=new AbortController();let timedOut=false;const to=setTimeout(()=>{timedOut=true;aiCtl.abort()},90000);
+  const H={'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};
+  const body=st=>JSON.stringify({model:aiModel(),max_tokens:1600,stream:st,system,messages});
+  const fail=async r=>{let m='';try{m=JSON.parse(await r.text()).error.message}catch(e){}throw {code:r.status,msg:m}};
+  try{
+    let out='';
+    // 1) streaming
+    try{
+      const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',signal:aiCtl.signal,cache:'no-store',headers:H,body:body(true)});
+      if(!r.ok)await fail(r);
+      if(r.body&&r.body.getReader){const rd=r.body.getReader(),dec=new TextDecoder();let buf='';
+        for(;;){const x=await rd.read();if(x.done)break;buf+=dec.decode(x.value,{stream:true});const L=buf.split('\n');buf=L.pop();
+          for(const ln of L){if(!ln.startsWith('data:'))continue;let ev;try{ev=JSON.parse(ln.slice(5))}catch(e){continue}
+            if(ev.type==='content_block_delta'&&ev.delta&&ev.delta.type==='text_delta'){out+=ev.delta.text;onText(out)}
+            else if(ev.type==='error')throw {code:ev.error&&ev.error.type==='overloaded_error'?529:'api',msg:ev.error&&ev.error.message}}}}
+    }catch(e){if(e&&(e.code||e.msg))throw e;if(aiCtl.signal.aborted)throw e;out=''}
+    // 2) لم يصل نص بالبث: طلب عادي بدون بث
+    if(!out.trim()){onText('… جارٍ تجهيز الرد');
+      const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',signal:aiCtl.signal,cache:'no-store',headers:H,body:body(false)});
+      if(!r.ok)await fail(r);const j=await r.json();out=(j.content||[]).filter(c=>c.type==='text').map(c=>c.text).join('\n');
+      if(!out.trim())throw {code:'empty'};onText(out)}
+    return out;
+  }catch(e){if(e&&e.name==='AbortError')throw {code:timedOut?'timeout':'stop'};if(e&&e.code)throw e;throw {code:'net'}}
+  finally{clearTimeout(to)}
 }
 const mdIn=t=>t.replace(/\*\*([^*\n]+)\*\*/g,'<b>$1</b>');
 function md(src){const o=[];let list=null,para=[];const fp=()=>{if(para.length){o.push('<p>'+mdIn(para.join('<br>'))+'</p>');para=[]}},fl=()=>{if(list){o.push(`<${list.t}>`+list.i.map(x=>'<li>'+mdIn(x)+'</li>').join('')+`</${list.t}>`);list=null}};
@@ -854,10 +869,10 @@ ${tl}`;
 }
 const AI_CHIPS=[['حلّل صفقتي','حلّل صفقتي الحالية: التكلفة، التعادل، أثر الرسوم، وما الذي كان يمكن تحسينه.'],['بكم أبيع؟','بناءً على سعر شرائي، ما أسعار البيع المنطقية للربح ووقف الخسارة؟ اشرح بالأرقام.'],['قيّم سجلي','قيّم سجل صفقاتي: الأنماط، أثر الرسوم، والأخطاء المتكررة.'],['هل الرسوم تستاهل؟','كم عقدًا أحتاج حتى لا تأكل الرسوم أكثر من 5% من قيمة الصفقة؟']];
 function aiRender(){$('#aiLog').innerHTML=aiMsgs.length?aiMsgs.map(m=>`<div class="ai-m ${m.role==='user'?'u':'a'} ${m.err?'err':''}">${m.role==='user'?esc(m.content):md(m.content||'…')}</div>`).join(''):'<div class="empty">اختر سؤالًا جاهزًا أو اكتب سؤالك.</div>';$('#aiLog').scrollTop=1e9}
-async function aiAsk(text){if(!text.trim())return;aiMsgs.push({role:'user',content:text});const a={role:'assistant',content:''};aiMsgs.push(a);aiRender();$('#aiSend').disabled=true;
+async function aiAsk(text){if(!text.trim())return;aiMsgs.push({role:'user',content:text});const a={role:'assistant',content:''};aiMsgs.push(a);const t0=Date.now(),tick=setInterval(()=>{if(!a.content||a.content.startsWith('…')){a.content='… يكتب الرد ('+Math.round((Date.now()-t0)/1000)+' ث)';aiRender()}},1000);aiRender();$('#aiSend').disabled=true;
   try{await aiCall(aiContext(),aiMsgs.filter(m=>m!==a&&!m.err).map(m=>({role:m.role,content:m.content})),t=>{a.content=t;aiRender()})}
   catch(e){a.content=aiErrMsg(e.code,e.msg);a.err=true}
-  aiRender();$('#aiSend').disabled=false}
+  clearInterval(tick);aiRender();$('#aiSend').disabled=false}
 $('#aiChips').innerHTML=AI_CHIPS.map((c,i)=>`<button class="chip" type="button" data-i="${i}">${c[0]}</button>`).join('');
 $('#aiChips').onclick=e=>{const c=e.target.closest('.chip');if(c)aiAsk(AI_CHIPS[+c.dataset.i][1])};
 $('#aiForm').onsubmit=e=>{e.preventDefault();const v=$('#aiQ').value;$('#aiQ').value='';aiAsk(v)};
