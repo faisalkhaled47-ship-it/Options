@@ -203,7 +203,7 @@ details.more summary::-webkit-details-marker{display:none}
       </div>
       <div class="grid2">
         <div><label class="lbl" for="qN">عدد العقود</label><input class="field" id="qN" inputmode="numeric" value="1"></div>
-        <div><label class="lbl" for="qSym">الرمز (اختياري)</label><input class="field" id="qSym" placeholder="TSLA" autocapitalize="characters"></div>
+        <div><label class="lbl" for="qSymSel">الرمز (اختياري)</label><select class="field symsel" id="qSymSel" data-inp="qSym"></select><input class="field" id="qSym" placeholder="اكتب الرمز" autocapitalize="characters" hidden style="margin-top:6px"></div>
       </div>
       <div style="display:flex;gap:8px;align-items:center"><button class="btn getq" type="button" data-sym="qSym" style="flex:none;min-height:34px;padding:4px 10px;font-size:13px">↻ سعر السهم الآن</button><span class="small muted qinfo" id="qiS"></span></div>
     </div>
@@ -230,7 +230,7 @@ details.more summary::-webkit-details-marker{display:none}
     <div class="stack">
       <div class="seg cp" id="cpSeg"><button data-v="call" aria-pressed="true">كول · صعود</button><button data-v="put" aria-pressed="false">بوت · هبوط</button></div>
       <div class="grid2">
-        <div><label class="lbl" for="sym">الرمز</label><input class="field" id="sym" value="TSLA" autocapitalize="characters"></div>
+        <div><label class="lbl" for="symSel">الرمز</label><select class="field symsel" id="symSel" data-inp="sym"></select><input class="field" id="sym" value="TSLA" autocapitalize="characters" hidden style="margin-top:6px" placeholder="اكتب الرمز"></div>
         <div><label class="lbl" for="broker">الوسيط</label><select class="field" id="broker"></select></div>
       </div>
       <div class="grid2">
@@ -430,7 +430,7 @@ details.more summary::-webkit-details-marker{display:none}
 
 <script>
 "use strict";
-const APP_VER='1.15',APP_BUILT='2026-11-07';
+const APP_VER='1.16',APP_BUILT='2026-11-07';
 /* ---------- helpers ---------- */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const num=v=>{v=String(v??'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[٫,]/g,'.');const n=parseFloat(v);return isFinite(n)?n:NaN};
@@ -1090,9 +1090,9 @@ function renderFav(){
   const q=LS.get('favq',{});
   $('#favList').innerHTML=favList().map(sy=>{const x=q[sy];const up=x&&x.dp>=0;
     return `<button type="button" class="row favrow" data-sym="${sy}" style="width:100%;background:none;border:0;border-top:1px solid var(--line);padding:10px 2px;cursor:pointer;color:inherit;font:inherit;text-align:start"><b class="num" style="min-width:56px;text-align:start">${sy}</b><span style="flex:1;text-align:end">${x?`<b class="num">$${f2(x.c)}</b> <span class="num small" style="color:var(--${up?'good':'bad'})">${up?'+':''}${f2(x.dp)}%</span>`:'<span class="small muted">—</span>'}</span></button>`}).join('');
-  $$('.favrow').forEach(b=>b.onclick=()=>{const sy=b.dataset.sym,x=(LS.get('favq',{}))[sy];$('#sym').value=sy;if(x){$('#S').value=x.c}$('#S').dispatchEvent(new Event('input',{bubbles:true}));$('#qSym').value=sy;window.scrollTo({top:document.querySelector('#sym').getBoundingClientRect().top+scrollY-90,behavior:'smooth'});if(!x)$('[data-into=S]').click()});
+  $$('.favrow').forEach(b=>b.onclick=()=>{const sy=b.dataset.sym,x=(LS.get('favq',{}))[sy];$('#sym').value=sy;if(x){$('#S').value=x.c}$('#S').dispatchEvent(new Event('input',{bubbles:true}));$('#qSym').value=sy;fillSymSels();window.scrollTo({top:document.querySelector('#sym').getBoundingClientRect().top+scrollY-90,behavior:'smooth'});if(!x)$('[data-into=S]').click()});
   $('#favEdit').value=favList().join(', ')}
-$('#favEdit').onchange=e=>{const l=[...new Set(e.target.value.toUpperCase().split(/[\s,،;]+/).filter(x=>/^[A-Z.\-]{1,6}$/.test(x)))].slice(0,20);LS.set('fav',l.length?l:FAV_DEF);renderFav()};
+$('#favEdit').onchange=e=>{const l=[...new Set(e.target.value.toUpperCase().split(/[\s,،;]+/).filter(x=>/^[A-Z.\-]{1,6}$/.test(x)))].slice(0,20);LS.set('fav',l.length?l:FAV_DEF);renderFav();fillSymSels()};
 $('#favRef').onclick=async()=>{
   const info=$('#favInfo'),btn=$('#favRef');if(!fhKey()){info.textContent='ضع مفتاح Finnhub في الإعدادات > سعر السهم اللحظي';return}
   btn.disabled=true;info.textContent='جارٍ التحديث…';const q=LS.get('favq',{});let ok=0,last='';
@@ -1101,6 +1101,21 @@ $('#favRef').onclick=async()=>{
   const n=favList().length,ts=Math.max(0,...Object.values(q).map(x=>x.t||0));
   info.textContent=ok===n?'حُدّثت '+n+' أسهم · '+fhTime(ts):ok?`حُدّث ${ok} من ${n} · ${fhMsg({message:last})}`:fhMsg({message:last})};
 renderFav();
+
+/* قائمة الرمز المنسدلة */
+function fillSymSels(){
+  $$('.symsel').forEach(sel=>{const inp=$('#'+sel.dataset.inp),cur=(inp.value||'').trim().toUpperCase(),fl=favList();
+    sel.innerHTML='<option value="">— اختر سهمًا —</option>'+fl.map(x=>`<option value="${x}">${x}</option>`).join('')+'<option value="__o">رمز آخر…</option>';
+    if(fl.includes(cur)){sel.value=cur;inp.hidden=true}else if(cur){sel.value='__o';inp.hidden=false}else{sel.value='';inp.hidden=true}})}
+$$('.symsel').forEach(sel=>sel.onchange=()=>{
+  const inp=$('#'+sel.dataset.inp),v=sel.value,btn=sel.dataset.inp==='sym'?$('[data-into=S]'):$('[data-sym=qSym]');
+  if(v==='__o'){inp.hidden=false;inp.value='';inp.focus();return}
+  inp.hidden=true;if(!v){inp.value='';return}
+  inp.value=v;inp.dispatchEvent(new Event('input',{bubbles:true}));
+  const x=(LS.get('favq',{}))[v];if(sel.dataset.inp==='sym'&&x){$('#S').value=x.c;$('#S').dispatchEvent(new Event('input',{bubbles:true}))}
+  if(fhKey())btn.click()});
+$('#sym').addEventListener('change',fillSymSels);$('#qSym').addEventListener('change',fillSymSels);
+fillSymSels();
 
 /* init */
 $('#verLbl').textContent=APP_VER;
