@@ -217,13 +217,86 @@ select.field{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w
 .favc.sel{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 25%,transparent);background:var(--accent-soft)}
 .closebox summary{cursor:pointer;color:var(--ink-2);font-size:12px;margin-top:4px;list-style:none}
 .closebox summary::-webkit-details-marker{display:none}
+
+/* ================= التصميم الجديد (data-skin="pro") مطابق لمصروفي وإتقان وكتابي ================= */
+.ptitle{display:none}
+.set-grp{font-size:12.5px;font-weight:700;color:var(--muted);margin:10px 4px -2px;text-align:start}
+.font-btns{display:flex;gap:8px;flex-wrap:wrap}.font-btns>*{flex:1;justify-content:center;min-width:0}
+.font-sample{margin:0;padding:10px 12px;border-radius:12px;background:var(--surface-2);font-size:15px;color:var(--ink);text-align:start!important}
+.fhint{font-size:12.5px;color:var(--ink-2);margin:6px 0 0;line-height:1.6}
+.filelbl{position:relative;overflow:hidden;display:inline-flex;align-items:center}.filelbl input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.about{text-align:center!important;color:var(--muted);font-size:12.5px;line-height:1.7;margin:14px 0 4px}
+html[data-skin=pro]{--bg:#F2F3F1;--surface:#FFFFFF;--surface-2:#F2F4F2;--line:rgba(16,24,20,.09);--ink:#101814;--ink-2:#4A544F;--muted:#89928D;--r:20px;--shadow:none;
+  --f-ui:-apple-system,BlinkMacSystemFont,"SF Arabic","SF Pro Text","IBM Plex Sans Arabic",system-ui,sans-serif;
+  --f-num:ui-rounded,-apple-system,"SF Pro Rounded","Readex Pro",system-ui,sans-serif;--f-display:var(--f-ui);--f-body:var(--f-ui)}
+@media (prefers-color-scheme: dark){html[data-skin=pro]:not([data-theme="light"]){--bg:#2E3137;--surface:#3A3E45;--surface-2:#454950;--line:rgba(255,255,255,.09)}}
+html[data-skin=pro][data-theme="dark"]{--bg:#2E3137;--surface:#3A3E45;--surface-2:#454950;--line:rgba(255,255,255,.09)}
+html[data-skin=pro] body{font-family:var(--f-ui);text-align:right;font-size:16px}
+html[data-skin=pro] .top{position:relative;top:auto;background:var(--bg);border-bottom:0;-webkit-backdrop-filter:none;backdrop-filter:none}
+html[data-skin=pro] .top-in{padding-block:10px 0;align-items:flex-end}
+html[data-skin=pro] .logo,html[data-skin=pro] .brand h1,html[data-skin=pro] #sub{display:none}
+html[data-skin=pro] .ptitle{display:block;margin:0;font-family:var(--f-ui);font-weight:800;font-size:31px;line-height:1.15;letter-spacing:-.01em;color:var(--ink)}
+html[data-skin=pro] .icon-btn{border:0;background:var(--surface);width:38px;height:38px;border-radius:999px;color:var(--ink-2)}
+html[data-skin=pro] .icon-btn svg{width:19px;height:19px}
+html[data-skin=pro] .wrap{padding-block:12px calc(100px + env(safe-area-inset-bottom,0px))}
+html[data-skin=pro] .view{gap:16px}
+html[data-skin=pro] #mktBar{border:0;box-shadow:none;border-radius:16px}
+html[data-skin=pro] .card{border:0;border-radius:var(--r);padding:18px 16px;box-shadow:none}
+html[data-skin=pro] .card h2{font-family:var(--f-ui);font-size:18px;font-weight:700;letter-spacing:-.005em}
+html[data-skin=pro] .card-h{flex-direction:row;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:12px;flex-wrap:wrap;row-gap:2px}
+html[data-skin=pro] .card-h h2{flex-shrink:0;max-width:100%}
+html[data-skin=pro] .card-h .hint{text-align:left;font-size:12.5px;margin-inline-start:auto}
+html[data-skin=pro] .lbl,html[data-skin=pro] .foot,html[data-skin=pro] .sec h3,html[data-skin=pro] .sec p{text-align:right}
+html[data-skin=pro] .lbl{color:var(--muted);font-weight:600;font-size:13px}
+html[data-skin=pro] .chips,html[data-skin=pro] .btns{justify-content:flex-start}
+html[data-skin=pro] .hero{text-align:center;border-radius:var(--r)}
+html[data-skin=pro] .hero .v{font-family:var(--f-num);font-weight:700;font-size:48px;letter-spacing:-.02em}
+html[data-skin=pro] .tiles{gap:10px}
+html[data-skin=pro] .tile{text-align:center;border-radius:16px}
+html[data-skin=pro] .tile .k{font-weight:600;font-size:12.5px}
+html[data-skin=pro] .tile .v2{font-family:var(--f-num);font-weight:600}
+html[data-skin=pro] .seg{border:0;background:var(--surface-2);border-radius:11px;padding:2px;gap:2px}
+html[data-skin=pro] .seg button{min-height:34px;font-size:14.5px;font-weight:600;border-radius:9px}
+html[data-skin=pro] .seg button[aria-pressed="true"]{box-shadow:0 1px 3px rgba(0,0,0,.12)}
+html[data-skin=pro] .field{border:0;background-color:var(--surface-2);border-radius:12px;text-align:right;min-height:46px}
+html[data-skin=pro] input[type="date"].field{text-align:right}
+html[data-skin=pro] .btn{border:0;background:var(--surface-2);border-radius:12px;font-weight:600;box-shadow:none}
+html[data-skin=pro] .btn.primary{background:var(--accent);color:var(--accent-ink);border-radius:14px;font-weight:700;min-height:48px;box-shadow:none}
+html[data-skin=pro] .chip{border:0;background:var(--surface-2)}
+html[data-skin=pro] .favc{border:0;background:var(--surface-2)}
+html[data-skin=pro] .favc.sel{background:var(--accent-soft);box-shadow:inset 0 0 0 2px var(--accent)}
+html[data-skin=pro] .alert{border-radius:16px}
+html[data-skin=pro] .panel{border-radius:24px 24px 0 0;background:var(--bg)}
+html[data-skin=pro] .panel .card,html[data-skin=pro] .panel .sec{background:var(--surface)}
+html[data-skin=pro] .sec{border-top:0;background:var(--surface);border-radius:16px;padding:14px}
+html[data-skin=pro] .panel-h{justify-content:space-between;position:static}
+html[data-skin=pro] .panel-h h2{font-family:var(--f-ui);font-size:19px;font-weight:800}
+html[data-skin=pro] .panel .sec .field,html[data-skin=pro] .panel .card .field{background-color:var(--surface-2)}
+/* شريط التنقل: كبسولة عائمة بحبّة منزلقة */
+html[data-skin=pro] .tabs{background:transparent;border-top:0;pointer-events:none;box-shadow:none;padding:0 max(14px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px))}
+html[data-skin=pro] .tabs-in{pointer-events:auto;position:relative;max-width:440px;padding:5px;border-radius:999px;-webkit-backdrop-filter:saturate(180%) blur(24px);backdrop-filter:saturate(180%) blur(24px)}
+html[data-skin=pro] .tabs-in::before{content:"";position:absolute;top:5px;bottom:5px;width:calc((100% - 10px) / 5);inset-inline-start:calc(5px + (100% - 10px) / 5 * var(--i,0));border-radius:999px;transition:inset-inline-start .34s cubic-bezier(.3,.8,.2,1)}
+html[data-skin=pro] .tab{position:relative;z-index:1;border-radius:999px;font-size:10.5px;font-weight:600;gap:3px;padding:7px 0 6px;transition:color .2s,transform .12s}
+html[data-skin=pro] .tab:active{transform:scale(.93)}
+html[data-skin=pro] .tab svg{width:24px;height:24px;padding:0;border-radius:0;background:none!important;transition:stroke-width .2s}
+html[data-skin=pro] .tab[aria-current="page"] svg{fill:currentColor;fill-opacity:.25;stroke-width:2.1}
+html[data-skin=pro]{--tb-bg:rgba(21,33,28,.93);--tb-ink:rgba(255,255,255,.62);--tb-pill:var(--accent);--tb-on:#FFFFFF;--tb-shadow:0 12px 32px rgba(16,24,20,.3),inset 0 1px 0 rgba(255,255,255,.08)}
+@media (prefers-color-scheme: dark){html[data-skin=pro]:not([data-theme="light"]){--tb-bg:rgba(88,93,102,.94);--tb-ink:rgba(255,255,255,.68);--tb-pill:var(--accent);--tb-on:var(--accent-ink);--tb-shadow:0 12px 32px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.1)}}
+html[data-skin=pro][data-theme="dark"]{--tb-bg:rgba(88,93,102,.94);--tb-ink:rgba(255,255,255,.68);--tb-pill:var(--accent);--tb-on:var(--accent-ink);--tb-shadow:0 12px 32px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.1)}
+html[data-skin=pro] .tabs-in{background:var(--tb-bg);box-shadow:var(--tb-shadow)}
+html[data-skin=pro] .tabs-in::before{background:var(--tb-pill)}
+html[data-skin=pro] .tab{color:var(--tb-ink)}
+html[data-skin=pro] .tab[aria-current="page"]{color:var(--tb-on)}
+@media (max-width:370px){html[data-skin=pro] .hero .v{font-size:38px}html[data-skin=pro] .ptitle{font-size:27px}}
+@media (prefers-reduced-motion: reduce){html[data-skin=pro] *{transition:none!important}}
 </style>
+<script>try{var _sk=JSON.parse(localStorage.getItem('opt_skin')||'null');document.documentElement.setAttribute('data-skin',_sk==='classic'?'classic':'pro')}catch(e){document.documentElement.setAttribute('data-skin','pro')}</script>
 </head>
 <body>
 <header class="top"><div class="top-in">
   <div class="brand">
     <span class="logo" aria-hidden="true" style="font-family:var(--f-display);font-weight:700;font-size:19px">خ</span>
-    <div><h1>خياراتي</h1><p id="sub">الإصدار <span class="num" id="verLbl"></span></p></div>
+    <div style="min-width:0"><h1>خياراتي</h1><p id="sub">الإصدار <span class="num" id="verLbl"></span></p><p class="ptitle" id="pageTitle" role="heading" aria-level="1"></p></div>
   </div>
   <div class="top-btns" style="display:flex;gap:8px">
   <button id="btnHide" class="icon-btn" type="button" aria-label="إخفاء المبالغ"><svg class="eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.9 17.9A10.4 10.4 0 0 1 12 19c-6.4 0-10-7-10-7a18.4 18.4 0 0 1 4.1-5"/><path d="M9.9 5.2A9.7 9.7 0 0 1 12 5c6.4 0 10 7 10 7a18.6 18.6 0 0 1-2.2 3.2"/><path d="M14.1 14.1a3 3 0 1 1-4.2-4.2"/><path d="M3 3l18 18"/></svg></button>
@@ -405,8 +478,11 @@ select.field{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w
   <div class="panel-h"><h2 id="setTitle">الإعدادات</h2><button type="button" class="link" id="closeSet">إغلاق</button></div>
   <div class="set-grp">عام</div>
   <div class="sec sfold" id="setLook"><div class="card-h"><h2>المظهر</h2></div>
+    <h3>التصميم</h3><div class="seg" id="skinSeg" role="group" aria-label="التصميم"><button type="button" data-skin-set="pro">الجديد</button><button type="button" data-skin-set="classic">السابق</button></div>
     <h3>الخط</h3><select id="fontSel" class="field" aria-label="الخط"></select>
     <p class="font-sample" id="fontSample">ربحك الصافي <span class="num">$6.90</span> · 25.86 ر.س · بوت TSLA 347.5</p>
+    <div class="font-btns"><label class="btn filelbl">أضف ملفات الخط<input type="file" id="fontFile" multiple></label><button type="button" class="btn" id="fontDel" hidden>احذف خطك</button></div>
+    <p class="fhint" id="fontWts" style="margin:0" hidden></p>
     <h3>الألوان</h3><div class="seg" id="themeSeg"><button data-v="auto">تلقائي</button><button data-v="light">فاتح</button><button data-v="dark">داكن</button></div>
   </div>
   <div class="sec sfold" id="setStart"><div class="card-h"><h2>الصفحة الافتراضية</h2></div>
@@ -477,7 +553,7 @@ select.field{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w
 
 <script>
 "use strict";
-const APP_VER='1.19',APP_BUILT='2026-11-07';
+const APP_VER='1.20',APP_BUILT='2026-11-07';
 /* ---------- helpers ---------- */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const num=v=>{v=String(v??'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[٫,]/g,'.');const n=parseFloat(v);return isFinite(n)?n:NaN};
@@ -855,7 +931,8 @@ function bindCalc(){
     trades.push(t);saveTrades();toast('حُفظت في السجل');
   };
 }
-function go(tab){$$('.view').forEach(v=>v.hidden=v.dataset.view!==tab);$$('.tab').forEach(t=>t.setAttribute('aria-current',t.dataset.tab===tab?'page':'false'));window.scrollTo(0,0);LS.set('tab',tab);
+const TAB_TITLES={simple:'صفقتي',calc:'تحليل',log:'السجل',fx:'التحويل',learn:'تعلّم'};
+function go(tab){$$('.view').forEach(v=>v.hidden=v.dataset.view!==tab);$('#pageTitle').textContent=TAB_TITLES[tab]||'خياراتي';$('.tabs-in').style.setProperty('--i',Math.max(0,Object.keys(TAB_TITLES).indexOf(tab)));$$('.tab').forEach(t=>t.setAttribute('aria-current',t.dataset.tab===tab?'page':'false'));window.scrollTo(0,0);LS.set('tab',tab);
   if(tab==='log')renderLog();if(tab==='fx')renderFX();if(tab==='calc')calc();if(tab==='simple')renderSimple()}
 $$('.tab').forEach(t=>t.onclick=()=>go(t.dataset.tab));
 $$('#logFilter .chip').forEach(c=>c.onclick=()=>{logF=c.dataset.f;$$('#logFilter .chip').forEach(x=>x.setAttribute('aria-pressed',x===c));renderLog()});
@@ -1078,18 +1155,54 @@ window.sbDiff=sbDiff;
 
 
 /* ---------- settings like مصروفي ---------- */
-const FONT_LIST=[['sys','الافتراضي (Readex + IBM Plex)'],['Tajawal','Tajawal · تجوال'],['Cairo','Cairo · القاهرة'],['Almarai','Almarai · المراعي'],['IBM Plex Sans Arabic','IBM Plex Sans Arabic'],['Readex Pro','Readex Pro'],['Noto Kufi Arabic','Noto Kufi · كوفي'],['Noto Naskh Arabic','Noto Naskh · نسخ']];
-function applyFont(f){let st=document.getElementById('userFontCss');if(f==='sys'||!f){if(st)st.remove();document.documentElement.style.removeProperty('--f-display');document.documentElement.style.removeProperty('--f-body');return}
-  if(!document.getElementById('gf-'+f)){const l=document.createElement('link');l.id='gf-'+f;l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family='+encodeURIComponent(f)+':wght@400;500;700&display=swap';document.head.appendChild(l)}
-  const v=`"${f}",system-ui,sans-serif`;document.documentElement.style.setProperty('--f-display',v);document.documentElement.style.setProperty('--f-body',v);document.body.style.fontFamily=v}
-$('#fontSel').innerHTML=FONT_LIST.map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');$('#fontSel').value=LS.get('font','sys');applyFont(LS.get('font','sys'));
+/* الخطوط: قائمة جاهزة + خطك أنت (ملف لكل وزن) يُحفظ في IndexedDB على جهازك، مثل مصروفي */
+const FONT_LIST=[['sys','خط النظام (الافتراضي)'],['Tajawal','Tajawal · تجوال'],['Cairo','Cairo · القاهرة'],['Almarai','Almarai · المراعي'],['IBM Plex Sans Arabic','IBM Plex Sans Arabic'],['Readex Pro','Readex Pro'],['Noto Kufi Arabic','Noto Kufi · كوفي'],['Noto Naskh Arabic','Noto Naskh · نسخ']];
+const GF={'Tajawal':'400;500;700;800','Cairo':'400;500;600;700;800','Almarai':'400;700;800','IBM Plex Sans Arabic':'400;500;600;700','Readex Pro':'400;500;600;700','Noto Kufi Arabic':'400;500;600;700;800','Noto Naskh Arabic':'400;500;600;700'};
+const WEIGHT_NAMES={100:'رفيع',200:'خفيف جدًا',300:'خفيف',400:'عادي',500:'متوسط',600:'شبه عريض',700:'عريض',800:'عريض جدًا',900:'أسود'};
+function gfLoad(f){if(!GF[f]||document.getElementById('gf-'+f.replace(/\s/g,'')))return;const l=document.createElement('link');l.rel='stylesheet';l.id='gf-'+f.replace(/\s/g,'');l.href='https://fonts.googleapis.com/css2?family='+encodeURIComponent(f).replace(/%20/g,'+')+':wght@'+GF[f]+'&display=swap';document.head.appendChild(l)}
+function fontVars(fam){const r=document.documentElement.style,k=['--f-ui','--f-body','--f-display','--f-num'];if(!fam){k.forEach(x=>r.removeProperty(x));return}const v='"'+fam+'",-apple-system,"SF Arabic",system-ui,sans-serif';k.forEach(x=>r.setProperty(x,v))}
+function fontDB(mode,fn){return new Promise((res,rej)=>{try{const rq=indexedDB.open('khiyarati-font',1);rq.onupgradeneeded=()=>rq.result.createObjectStore('f');
+  rq.onsuccess=()=>{const db=rq.result,tx=db.transaction('f',mode),q=fn(tx.objectStore('f'));tx.oncomplete=()=>{res(q&&q.result);db.close()};tx.onerror=()=>{rej(tx.error);db.close()}};rq.onerror=()=>rej(rq.error)}catch(e){rej(e)}})}
+function fontAll(){return fontDB('readonly',st=>st.getAll()).then(l=>(l||[]).filter(x=>x&&x.buf),()=>[])}
+function weightOf(name,buf){const n=String(name).toLowerCase().replace(/[\s_]+/g,'-');
+  if(/black|heavy/.test(n))return 900;if(/extra-?bold|ultra-?bold/.test(n))return 800;if(/semi-?bold|demi/.test(n))return 600;if(/bold/.test(n))return 700;
+  if(/medium/.test(n))return 500;if(/extra-?light|ultra-?light/.test(n))return 200;if(/thin|hairline/.test(n))return 100;if(/light/.test(n))return 300;if(/regular|normal|book|roman/.test(n))return 400;
+  try{const v=new DataView(buf),tag=String.fromCharCode(v.getUint8(0),v.getUint8(1),v.getUint8(2),v.getUint8(3));
+    if(tag==='\x00\x01\x00\x00'||tag==='OTTO'||tag==='true'){const nt=v.getUint16(4);for(let k=0;k<nt;k++){const o=12+k*16;
+      if(String.fromCharCode(v.getUint8(o),v.getUint8(o+1),v.getUint8(o+2),v.getUint8(o+3))==='OS/2'){const w=v.getUint16(v.getUint32(o+8)+4);if(w>=100&&w<=900)return Math.round(w/100)*100}}}}catch(e){}
+  return 400}
+let _userFont=0;
+function addFace(rec){const ff=new FontFace('KhiyaratiUser',rec.buf.slice(0),{weight:String(rec.weight),style:'normal'});return ff.load().then(f=>{document.fonts.add(f);_userFont++;return f})}
+function loadUserFont(){return fontAll().then(l=>Promise.all(l.map(r=>addFace(r).catch(()=>{}))).then(()=>l))}
+function applyFont(v){
+  if(v==='custom'){if(_userFont)fontVars('KhiyaratiUser');else loadUserFont().then(l=>{if(l.length)fontVars('KhiyaratiUser');else fontVars(null)});return}
+  if(GF[v]){gfLoad(v);fontVars(v)}else fontVars(null)}
+function fontFamilyName(n){return String(n||'').replace(/[-_ ]?(thin|hairline|extra-?light|ultra-?light|light|regular|normal|book|roman|medium|semi-?bold|demi-?bold|extra-?bold|ultra-?bold|bold|black|heavy)$/i,'')||n}
+function renderFontSel(){fontAll().then(l=>{const cur=LS.get('font','sys'),ws=l.map(x=>+x.weight||400).sort((a,b)=>a-b);
+  let o=FONT_LIST.map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');
+  if(l.length)o+=`<option value="custom">خطك (${esc(fontFamilyName((l.find(x=>+x.weight===400)||l[0]).name))})</option>`;
+  const sel=$('#fontSel');sel.innerHTML=o;sel.value=cur==='custom'&&!l.length?'sys':cur;
+  $('#fontDel').hidden=!l.length;const fw=$('#fontWts');fw.hidden=!l.length;fw.textContent=l.length?'أوزان خطك: '+ws.map(w=>WEIGHT_NAMES[w]||w).join('، '):''})}
 $('#fontSel').onchange=e=>{LS.set('font',e.target.value);applyFont(e.target.value)};
+$('#fontFile').onchange=function(){const inp=this,files=[...(inp.files||[])];setTimeout(()=>{inp.value=''},0);if(!files.length)return;
+  const ok=[];let bad=0;toast('جارٍ إضافة الخط…');
+  files.reduce((pr,f)=>pr.then(()=>{if(f.size>12e6){bad++;return}
+    return f.arrayBuffer().then(buf=>{const w=weightOf(f.name,buf),rec={name:f.name.replace(/\.(ttf|otf|woff2?)$/i,'').slice(0,40),weight:w,buf};
+      return addFace(rec).then(()=>fontDB('readwrite',st=>st.put(rec,'w'+w))).then(()=>{ok.push(w)})}).catch(()=>{bad++})}),Promise.resolve()).then(()=>{
+    if(ok.length){LS.set('font','custom');fontVars('KhiyaratiUser');toast('أُضيف الخط: '+ok.sort((a,b)=>a-b).map(w=>WEIGHT_NAMES[w]||w).join('، ')+(bad?'. ولم يُقبل '+bad+' ملف لأنه ليس ملف خط':''))}
+    else toast('تعذّرت إضافة الخط: اختر ملفات ttf أو otf أو woff');
+    renderFontSel()})};
+$('#fontDel').onclick=()=>{fontDB('readwrite',st=>st.clear()).catch(()=>{}).then(()=>{if(LS.get('font','sys')==='custom'){LS.set('font','sys');fontVars(null)}
+  const gone=[];document.fonts.forEach(f=>{if(/KhiyaratiUser/.test(f.family))gone.push(f)});gone.forEach(f=>document.fonts.delete(f));_userFont=0;renderFontSel();toast('حُذف خطك ورجع خط النظام')})};
+applyFont(LS.get('font','sys'));
+$$('[data-skin-set]').forEach(b=>b.onclick=()=>{LS.set('skin',b.dataset.skinSet);document.documentElement.setAttribute('data-skin',b.dataset.skinSet);renderSettings()});
 $$('#startSeg button').forEach(b=>b.onclick=()=>{LS.set('start',b.dataset.v);$$('#startSeg button').forEach(x=>x.setAttribute('aria-pressed',x===b));toast('يفتح التطبيق على «'+b.textContent+'»')});
 const FOLD_CHEV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
 function foldSet(c,open){c.classList.toggle('fold-closed',!open)}
 $$('#setSheet .sfold[id]').forEach(c=>{const h=c.querySelector(':scope > .card-h');c.classList.add('fold');h.insertAdjacentHTML('beforeend','<button type="button" class="fold-tog" aria-label="فتح/إغلاق">'+FOLD_CHEV+'</button>');foldSet(c,!!LS.get('fold',{})[c.id])});
 document.addEventListener('click',e=>{const h=e.target.closest&&e.target.closest('.fold > .card-h');if(!h)return;const c=h.parentNode,o=c.classList.contains('fold-closed');foldSet(c,o);const f=LS.get('fold',{});f[c.id]=o;LS.set('fold',f)});
 function renderSettings(){
+  renderFontSel();{const sk=LS.get('skin','pro')==='classic'?'classic':'pro';$$('[data-skin-set]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.skinSet===sk)))}
   $('#setBroker').value=st.broker in brokers?st.broker:'sahm';renderFeeForm();sbRender();
   const cap=num(LS.get('cap',''));$('#sCapUsd').value=cap>0?+cap.toFixed(2):'';$('#sCapSar').value=cap>0?+(cap*RATE()).toFixed(2):'';$('#capSum').textContent=cap>0?'$'+f2(cap):'غير محدد';
   const b=brokers.sahm;$('#fxR').value=+RATE().toFixed(4);$('#fxF').value=b.fxFee||0;$('#fxSum').textContent=f2(RATE(),4);
