@@ -161,6 +161,18 @@ details.more summary::-webkit-details-marker{display:none}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:50;background:var(--toast-bg);color:var(--toast-fg);padding:11px 16px;border-radius:13px;font-size:14px;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
 .ai-panel{height:min(90vh,90dvh);display:flex;flex-direction:column}.ai-log{flex:1;overflow:auto;display:flex;flex-direction:column;gap:10px;padding:4px 0}.ai-m{border-radius:14px;padding:10px 13px;font-size:14.5px;line-height:1.75;max-width:94%}.ai-m.u{background:var(--accent);color:var(--accent-ink);align-self:flex-start}.ai-m.a{background:var(--surface);border:1px solid var(--line);align-self:flex-end}.ai-m.a h4{margin:8px 0 4px;font-family:var(--f-display);font-size:15px}.ai-m.a p{margin:4px 0}.ai-m.a ul,.ai-m.a ol{margin:4px 0;padding-inline-start:20px}.ai-m.err{background:var(--bad-soft)}
 .set-grp{font-size:12.5px;font-weight:600;color:var(--muted);margin:16px 4px 6px}.panel .sec{margin-bottom:10px}.sb-bad{color:var(--bad)}.sb-sql{font-size:11px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:8px;max-height:200px;overflow:auto;white-space:pre-wrap;direction:ltr;text-align:left}.sb-how ol{padding-inline-start:18px;font-size:13px;color:var(--ink-2)}.sb-how li{margin-bottom:6px}.sb-how summary{color:var(--accent);cursor:pointer;font-size:13.5px}
+.panel-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}.panel-h h2{font-family:var(--f-display);font-size:17px;font-weight:600;margin:0}
+.link{appearance:none;border:0;background:none;color:var(--accent);font-weight:600;font-size:14.5px;cursor:pointer;padding:6px}
+.set-grp{font-size:12.5px;font-weight:700;color:var(--muted);margin:14px 4px 2px}
+.sec{border-top:1px solid var(--line);padding:12px 0;display:flex;flex-direction:column;gap:8px}.sec h3{font-size:14px;font-weight:600;margin:0}.sec p{margin:0;font-size:13px;color:var(--ink-2)}
+.sec > .card-h{margin-bottom:2px}.sec > .card-h h2{font-size:15.5px;font-weight:700;margin:0}
+.btns{display:flex;gap:8px;flex-wrap:wrap}.btns .btn{flex:1}
+.font-sample{margin:0;padding:10px 12px;border-radius:12px;background:var(--surface-2);font-size:15px;color:var(--ink)}
+.about{text-align:center;color:var(--muted);font-size:12.5px;line-height:1.7;margin:14px 0 4px}
+.fold > .card-h{position:relative;padding-inline-end:38px;cursor:pointer}
+.fold-tog{position:absolute;inset-inline-end:-4px;top:50%;transform:translateY(-50%);width:34px;height:34px;border:0;border-radius:999px;background:var(--surface-2);color:var(--ink-2);display:grid;place-items:center;cursor:pointer;padding:0}
+.fold-tog svg{width:18px;height:18px;transition:transform .2s}.fold:not(.fold-closed) .fold-tog svg{transform:rotate(180deg)}
+.fold.fold-closed > :not(.card-h){display:none!important}.fold.fold-closed > .card-h{margin-bottom:0}
 .foot{font-size:11.5px;color:var(--muted);text-align:center;line-height:1.6;margin-top:4px}
 .foot a{color:var(--accent)}
 </style>
@@ -331,28 +343,47 @@ details.more summary::-webkit-details-marker{display:none}
 </div></nav>
 
 <!-- إعدادات -->
-<div class="sheet" id="setSheet" hidden><div class="panel" role="dialog" aria-modal="true">
+<div class="sheet" id="setSheet" hidden><div class="panel" role="dialog" aria-modal="true" aria-labelledby="setTitle">
   <div class="grab"></div>
-  <div style="display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0">الإعدادات</h3><button class="btn" id="closeSet" type="button">إغلاق</button></div>
+  <div class="panel-h"><h2 id="setTitle">الإعدادات</h2><button type="button" class="link" id="closeSet">إغلاق</button></div>
   <div class="set-grp">عام</div>
-  <div class="card sec"><div class="card-h"><h2>المظهر</h2></div><div class="seg" id="themeSeg"><button data-v="auto">تلقائي</button><button data-v="light">فاتح</button><button data-v="dark">داكن</button></div></div>
-  <div class="set-grp">الرسوم والصرف</div>
-  <div class="card sec"><div class="card-h"><h2>رسوم الوسيط</h2></div>
-    <div class="stack"><select class="field" id="setBroker"></select><div id="feeForm" class="stack"></div><p class="hint" id="feeNote" style="margin:0"></p>
-    <div class="grid2"><button class="btn" id="resetFees">استعادة الافتراضي</button><button class="btn primary" id="saveFees">حفظ</button></div></div></div>
+  <div class="sec sfold" id="setLook"><div class="card-h"><h2>المظهر</h2></div>
+    <h3>الخط</h3><select id="fontSel" class="field" aria-label="الخط"></select>
+    <p class="font-sample" id="fontSample">ربحك الصافي <span class="num">$6.90</span> · 25.86 ر.س · بوت TSLA 347.5</p>
+    <h3>الألوان</h3><div class="seg" id="themeSeg"><button data-v="auto">تلقائي</button><button data-v="light">فاتح</button><button data-v="dark">داكن</button></div>
+  </div>
+  <div class="sec sfold" id="setStart"><div class="card-h"><h2>الصفحة الافتراضية</h2></div>
+    <p>الصفحة التي يفتح عليها التطبيق.</p>
+    <div class="seg" id="startSeg"><button data-v="simple">صفقتي</button><button data-v="log">السجل</button><button data-v="calc">تحليل</button></div>
+  </div>
+  <div class="set-grp">التداول</div>
+  <div class="sec sfold" id="setCap"><div class="card-h"><h2>رأس المال</h2><span class="hint" id="capSum"></span></div>
+    <div class="grid2"><div><label class="lbl" for="sCapUsd">بالدولار</label><input class="field" id="sCapUsd" inputmode="decimal"></div><div><label class="lbl" for="sCapSar">بالريال</label><input class="field" id="sCapSar" inputmode="decimal"></div></div>
+    <p>يُستخدم لحساب العائد ونسبة كل صفقة من حسابك.</p>
+  </div>
+  <div class="sec sfold" id="setFees"><div class="card-h"><h2>رسوم الوسيط</h2><span class="hint" id="feeSum"></span></div>
+    <select class="field" id="setBroker" aria-label="الوسيط"></select><div id="feeForm" class="stack"></div><p id="feeNote"></p>
+    <div class="btns"><button class="btn primary" id="saveFees">حفظ</button><button class="btn" id="resetFees">استعادة الافتراضي</button></div>
+  </div>
+  <div class="sec sfold" id="setFx"><div class="card-h"><h2>سعر الصرف</h2><span class="hint" id="fxSum"></span></div>
+    <div class="grid2"><div><label class="lbl" for="fxR">ريال لكل دولار (سهم)</label><input class="field" id="fxR" inputmode="decimal"></div><div><label class="lbl" for="fxF">رسم ثابت لكل تحويل (ر.س)</label><input class="field" id="fxF" inputmode="decimal"></div></div>
+    <p>انسخه من سجل «تحويل العملة» في سهم. آخر تحويل لك: 1 ر.س = 0.2662$، أي 3.7566.</p>
+  </div>
   <div class="set-grp">الربط</div>
-  <div class="card sec"><div class="card-h"><h2>المساعد الذكي (Claude)</h2></div>
-    <div class="stack"><div><label class="lbl" for="clKey">مفتاح API</label><input class="field" type="password" id="clKey" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="sk-ant-…"></div>
-    <div><label class="lbl" for="clModel">النموذج</label><select class="field" id="clModel"></select></div>
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn primary" id="clTest" type="button">جرّب المفتاح</button><span class="small" id="clRes"></span></div>
-    <p class="hint" style="margin:0" id="clNote">من platform.claude.com. يبقى على جهازك فقط، ولا يدخل في النسخة الاحتياطية ولا المزامنة.</p></div></div>
-  <div class="card sec"><div class="card-h"><h2>المزامنة بين أجهزتك</h2><span class="hint">Supabase</span></div><div id="sbSec" class="stack"></div></div>
+  <div class="sec sfold" id="setAI"><div class="card-h"><h2>المساعد الذكي (Claude)</h2><span class="hint" id="aiSum"></span></div>
+    <label class="lbl" for="clKey">مفتاح API</label><input class="field" type="password" id="clKey" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="sk-ant-…">
+    <label class="lbl" for="clModel">النموذج</label><select class="field" id="clModel"></select>
+    <div class="btns" style="align-items:center"><button class="btn primary" id="clTest" type="button">جرّب المفتاح</button><span class="small" id="clRes"></span></div>
+    <p id="clNote">من platform.claude.com. يبقى على جهازك فقط، ولا يدخل في النسخة الاحتياطية ولا المزامنة.</p>
+  </div>
+  <div class="sec sfold" id="setSync"><div class="card-h"><h2>المزامنة بين أجهزتك</h2><span class="hint" id="sbSum">Supabase</span></div><div id="sbSec" class="stack"></div></div>
   <div class="set-grp">البيانات</div>
-  <div class="card sec"><div class="card-h"><h2>النسخ الاحتياطي</h2></div>
-    <div class="grid2"><button class="btn primary" id="exportBtn">نسخة احتياطية JSON</button><button class="btn" id="importBtn">استيراد نسخة</button></div>
+  <div class="sec sfold" id="setData"><div class="card-h"><h2>النسخ الاحتياطي والتصدير</h2></div>
+    <div class="btns"><button class="btn primary" id="exportBtn">نسخة احتياطية JSON</button><button class="btn" id="csvBtn">تصدير الصفقات CSV</button><button class="btn" id="importBtn">استيراد نسخة</button></div>
     <input type="file" id="importFile" accept="application/json,.json" hidden>
-    <p class="hint" style="margin:8px 0 0">احفظ النسخة في iCloud Drive وليس «على الـ iPhone». حذف أيقونة التطبيق قد يحذف بياناته.</p></div>
-  <p class="foot" id="aboutTxt"></p>
+    <p>احفظ النسخة في iCloud Drive وليس «على الـ iPhone». حذف أيقونة التطبيق قد يحذف بياناته، والاسترجاع من ملف JSON فقط.</p>
+  </div>
+  <p class="about" id="aboutTxt"></p>
 </div></div>
 
 <!-- تفاصيل صفقة -->
@@ -384,7 +415,7 @@ details.more summary::-webkit-details-marker{display:none}
 
 <script>
 "use strict";
-const APP_VER='1.12',APP_BUILT='2026-11-07';
+const APP_VER='1.13',APP_BUILT='2026-11-07';
 /* ---------- helpers ---------- */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const num=v=>{v=String(v??'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[٫,]/g,'.');const n=parseFloat(v);return isFinite(n)?n:NaN};
@@ -783,10 +814,9 @@ $('#glossary').innerHTML=GLOSS.map(([k,v])=>`<details><summary>${k}</summary><p>
 function applyTheme(t){if(t==='auto')document.documentElement.removeAttribute('data-theme');else document.documentElement.dataset.theme=t;$$('#themeSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===t));LS.set('theme',t);calc()}
 $$('#themeSeg button').forEach(b=>b.onclick=()=>applyTheme(b.dataset.v));
 function renderFeeForm(){const k=$('#setBroker').value,b=brokers[k];
-  $('#feeForm').innerHTML=`<div><label class="lbl">اسم الوسيط</label><input class="field txt" data-k="name" value="${esc(b.name)}"></div><div class="grid2">${FEE_FIELDS.map(([f,l])=>`<div><label class="lbl">${l}</label><input class="field" data-k="${f}" inputmode="decimal" value="${b[f]}"></div>`).join('')}</div>`;
+  $('#feeForm').innerHTML=`<div><label class="lbl">اسم الوسيط</label><input class="field txt" data-k="name" value="${esc(b.name)}"></div><div class="grid2">${FEE_FIELDS.filter(f=>!f[0].startsWith('fx')).map(([f,l])=>`<div><label class="lbl">${l}</label><input class="field" data-k="${f}" inputmode="decimal" value="${b[f]}"></div>`).join('')}</div>`;
   $('#feeNote').textContent=b.note||''}
 $('#setBroker').onchange=renderFeeForm;
-$('#openSettings').onclick=()=>{$('#setBroker').value=st.broker;renderFeeForm();sbRender();$('#aboutTxt').innerHTML=`خياراتي · الإصدار <span class="num">${APP_VER}</span> · ${APP_BUILT}`;$('#setSheet').hidden=false};
 $('#closeSet').onclick=()=>$('#setSheet').hidden=true;
 $('#saveFees').onclick=()=>{const k=$('#setBroker').value,b=brokers[k];$$('#feeForm input').forEach(i=>{const f=i.dataset.k;b[f]=f==='name'?(i.value.trim()||b.name):(num(i.value)||0)});if(!(b.fxRate>0))b.fxRate=3.75;LS.set('brokers',brokers);fillBrokerSelects();calc();renderFX();toast('حُفظت الرسوم')};
 $('#resetFees').onclick=()=>{const k=$('#setBroker').value;brokers[k]=structuredClone(DEF_BROKERS[k]);LS.set('brokers',brokers);fillBrokerSelects();renderFeeForm();calc();toast('أُعيدت القيم الافتراضية')};
@@ -983,9 +1013,38 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)sbSoon(800
 window.addEventListener('online',()=>sbSoon(800));setInterval(()=>{if(!document.hidden)sbSync()},120000);
 window.sbDiff=sbDiff;
 
+
+/* ---------- settings like مصروفي ---------- */
+const FONT_LIST=[['sys','الافتراضي (Readex + IBM Plex)'],['Tajawal','Tajawal · تجوال'],['Cairo','Cairo · القاهرة'],['Almarai','Almarai · المراعي'],['IBM Plex Sans Arabic','IBM Plex Sans Arabic'],['Readex Pro','Readex Pro'],['Noto Kufi Arabic','Noto Kufi · كوفي'],['Noto Naskh Arabic','Noto Naskh · نسخ']];
+function applyFont(f){let st=document.getElementById('userFontCss');if(f==='sys'||!f){if(st)st.remove();document.documentElement.style.removeProperty('--f-display');document.documentElement.style.removeProperty('--f-body');return}
+  if(!document.getElementById('gf-'+f)){const l=document.createElement('link');l.id='gf-'+f;l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family='+encodeURIComponent(f)+':wght@400;500;700&display=swap';document.head.appendChild(l)}
+  const v=`"${f}",system-ui,sans-serif`;document.documentElement.style.setProperty('--f-display',v);document.documentElement.style.setProperty('--f-body',v);document.body.style.fontFamily=v}
+$('#fontSel').innerHTML=FONT_LIST.map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');$('#fontSel').value=LS.get('font','sys');applyFont(LS.get('font','sys'));
+$('#fontSel').onchange=e=>{LS.set('font',e.target.value);applyFont(e.target.value)};
+$$('#startSeg button').forEach(b=>b.onclick=()=>{LS.set('start',b.dataset.v);$$('#startSeg button').forEach(x=>x.setAttribute('aria-pressed',x===b));toast('يفتح التطبيق على «'+b.textContent+'»')});
+const FOLD_CHEV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+function foldSet(c,open){c.classList.toggle('fold-closed',!open)}
+$$('#setSheet .sfold[id]').forEach(c=>{const h=c.querySelector(':scope > .card-h');c.classList.add('fold');h.insertAdjacentHTML('beforeend','<button type="button" class="fold-tog" aria-label="فتح/إغلاق">'+FOLD_CHEV+'</button>');foldSet(c,!!LS.get('fold',{})[c.id])});
+document.addEventListener('click',e=>{const h=e.target.closest&&e.target.closest('.fold > .card-h');if(!h)return;const c=h.parentNode,o=c.classList.contains('fold-closed');foldSet(c,o);const f=LS.get('fold',{});f[c.id]=o;LS.set('fold',f)});
+function renderSettings(){
+  $('#setBroker').value=st.broker in brokers?st.broker:'sahm';renderFeeForm();sbRender();
+  const cap=num(LS.get('cap',''));$('#sCapUsd').value=cap>0?+cap.toFixed(2):'';$('#sCapSar').value=cap>0?+(cap*RATE()).toFixed(2):'';$('#capSum').textContent=cap>0?'$'+f2(cap):'غير محدد';
+  const b=brokers.sahm;$('#fxR').value=+RATE().toFixed(4);$('#fxF').value=b.fxFee||0;$('#fxSum').textContent=f2(RATE(),4);
+  $('#feeSum').textContent=(brokers[st.broker]||b).name;$('#aiSum').textContent=aiCfg().key?'مفعّل':'غير مفعّل';$('#sbSum').textContent=sbOn()?'متصل':'Supabase';
+  $$('#startSeg button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===LS.get('start','simple')));
+  $('#aboutTxt').innerHTML=`خياراتي · الإصدار <span class="num">${APP_VER}</span><br>${APP_BUILT}`}
+$('#openSettings').onclick=()=>{renderSettings();$('#setSheet').hidden=false};
+$('#sCapUsd').oninput=e=>{const v=num(e.target.value);LS.set('cap',v>0?v:'');$('#sCapSar').value=v>0?+(v*RATE()).toFixed(2):'';$('#capUsd').value=e.target.value;$('#capSar').value=$('#sCapSar').value;renderLog();renderSimple()};
+$('#sCapSar').oninput=e=>{const v=num(e.target.value)/RATE();LS.set('cap',v>0?v:'');$('#sCapUsd').value=v>0?+v.toFixed(2):'';$('#capUsd').value=$('#sCapUsd').value;$('#capSar').value=e.target.value;renderLog();renderSimple()};
+$('#fxR').onchange=e=>{const r=num(e.target.value);if(!(r>3&&r<5))return toast('اكتب السعر مثل 3.7566');const b=brokers.sahm;b.fxRate=3.75;b.fxSpread=+((r/3.75-1)*100).toFixed(4);LS.set('brokers',brokers);renderSettings();renderSimple();toast('حُفظ سعر الصرف')};
+$('#fxF').onchange=e=>{brokers.sahm.fxFee=num(e.target.value)||0;LS.set('brokers',brokers);toast('حُفظ')};
+$('#csvBtn').onclick=()=>{const rows=[['التاريخ','الرمز','النوع','التنفيذ','العقود','الدخول','الخروج','الرسوم $','الصافي $','الصافي ر.س']];
+  trades.forEach(t=>{const r=tradeNet(t);rows.push([t.date,t.sym,t.K?t.type:'',t.K||'',t.N,t.P,t.exit??'',r.fees.toFixed(2),r.net==null?'':r.net.toFixed(2),r.net==null?'':(r.net*RATE()).toFixed(2)])});
+  const blob=new Blob(['﻿'+rows.map(r=>r.map(x=>`"${String(x).replace(/"/g,'""')}"`).join(',')).join('\n')],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`khiyarati-trades-${today()}.csv`;a.click()};
+
 /* init */
 $('#verLbl').textContent=APP_VER;
-fillBrokerSelects();$('#broker').value=st.broker;bindCalc();applyTheme(LS.get('theme','auto'));renderCheck();renderQuiz();go('simple');
+fillBrokerSelects();$('#broker').value=st.broker;bindCalc();applyTheme(LS.get('theme','auto'));renderCheck();renderQuiz();go(LS.get('start','simple'));
 if('serviceWorker' in navigator&&location.protocol!=='file:'){const had=!!navigator.serviceWorker.controller;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had)toast('نسخة جديدة جاهزة؛ اضغط زر التحديث')});navigator.serviceWorker.register('sw.js').catch(()=>{})}
 sbSoon(800);
 </script>
