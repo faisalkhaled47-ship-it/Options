@@ -205,6 +205,8 @@ details.more summary::-webkit-details-marker{display:none}
         <div><label class="lbl" for="qN">عدد العقود</label><input class="field" id="qN" inputmode="numeric" value="1"></div>
         <div><label class="lbl" for="qSymSel">الرمز (اختياري)</label><select class="field symsel" id="qSymSel" data-inp="qSym"></select><input class="field" id="qSym" placeholder="اكتب الرمز" autocapitalize="characters" hidden style="margin-top:6px"></div>
       </div>
+      <div><label class="lbl" for="qExp">تاريخ انتهاء العقد (كما في سهم)</label><input class="field" type="date" id="qExp" style="text-align:start"></div>
+      <div class="alerts" id="closeS"></div>
       <div style="display:flex;gap:8px;align-items:center"><button class="btn getq" type="button" data-sym="qSym" style="flex:none;min-height:34px;padding:4px 10px;font-size:13px">↻ سعر السهم الآن</button><span class="small muted qinfo" id="qiS"></span></div>
     </div>
   </div>
@@ -243,6 +245,8 @@ details.more summary::-webkit-details-marker{display:none}
         <div><label class="lbl" for="N">عدد العقود</label><input class="field" id="N" inputmode="numeric" value="1"></div>
         <div><label class="lbl" for="D">أيام للانتهاء</label><input class="field" id="D" inputmode="numeric" value="60"></div>
       </div>
+      <div><label class="lbl" for="ED">تاريخ انتهاء العقد (كما في سهم)</label><input class="field" type="date" id="ED" style="text-align:start"></div>
+      <div class="alerts" id="closeC"></div>
       <details class="more" id="advBox"><summary>هدف الخروج والتذبذب (اختياري)</summary>
         <div class="stack mt">
           <div class="grid2">
@@ -430,7 +434,7 @@ details.more summary::-webkit-details-marker{display:none}
 
 <script>
 "use strict";
-const APP_VER='1.16',APP_BUILT='2026-11-07';
+const APP_VER='1.17',APP_BUILT='2026-11-07';
 /* ---------- helpers ---------- */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const num=v=>{v=String(v??'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[٫,]/g,'.');const n=parseFloat(v);return isFinite(n)?n:NaN};
@@ -490,9 +494,9 @@ function bs(type,S,K,days,iv,r=0.04){
 function impliedVol(type,S,K,days,P){let lo=1,hi=400;if(!(P>0)||!(days>0))return NaN;for(let i=0;i<60;i++){const m=(lo+hi)/2;bs(type,S,K,days,m).price>P?hi=m:lo=m}return (lo+hi)/2}
 
 /* ---------- state ---------- */
-let st=Object.assign({type:'call',sym:'TSLA',broker:'sahm',S:'360',K:'380',P:'12.50',N:'1',D:'60',T:'400',IV:'55',TD:'30',X:''},LS.get('calc',{}));
+let st=Object.assign({type:'call',sym:'TSLA',broker:'sahm',S:'360',K:'380',P:'12.50',N:'1',D:'60',T:'400',IV:'55',TD:'30',X:'',ED:''},LS.get('calc',{}));
 let trades=LS.get('trades',[]);
-const IDS=['sym','S','K','P','N','D','T','IV','TD','X'];
+const IDS=['sym','S','K','P','N','D','T','IV','TD','X','ED'];
 
 function fillBrokerSelects(){
   for(const id of ['#broker','#setBroker']){const el=$(id),cur=el.value||st.broker;el.innerHTML=Object.entries(brokers).map(([k,b])=>`<option value="${k}">${esc(b.name)}</option>`).join('');el.value=cur in brokers?cur:'sahm'}
@@ -683,7 +687,7 @@ function renderLog(){
   // list
   const list=trades.filter(t=>logF==='all'||(logF==='open'?t.exit==null:t.exit!=null)).sort((a,c)=>(c.date||'').localeCompare(a.date||''));
   $('#trades').innerHTML=list.length?list.map(t=>{const r=tradeNet(t);return `<div class="trade" data-id="${t.id}"><div class="badge ${t.K?t.type:'call'}">${t.K?(t.type==='call'?'CALL':'PUT'):'عقد'}</div>
-   <div><div class="t1"><span class="num">${esc(t.sym)}${t.K?' '+f2(t.K,t.K%1?1:0):''}</span>${t.exit==null?'<span class="pill">مفتوحة</span>':''}</div><div class="t2">${t.N} × ${f2(t.P)} · ${esc(brokers[t.broker]?.name||'')} · ${esc(t.date||'')}</div></div>
+   <div><div class="t1"><span class="num">${esc(t.sym)}${t.K?' '+f2(t.K,t.K%1?1:0):''}</span>${t.exit==null?'<span class="pill">مفتوحة</span>':''}</div><div class="t2">${t.N} × ${f2(t.P)} · ${esc(brokers[t.broker]?.name||'')} · ${esc(t.date||'')}</div>${t.exit==null&&t.exp?closeLine(t.exp):''}</div>
    <div class="amt ${r.net==null?'':sg(r.net)}">${r.net==null?usd(-r.cost):usd(r.net)}</div></div>`}).join(''):'<div class="empty">لا توجد صفقات بعد. احفظ صفقة من الحاسبة.</div>';
   // lessons
   const L=[];
@@ -769,7 +773,7 @@ function sellTable(b,B,N,paid,be,Sl){
 
 function renderSimple(){
   const b=brokers.sahm,B=num($('#qBuy').value),Sl=num($('#qSell').value),N=Math.max(1,Math.round(num($('#qN').value)||1));
-  LS.set('simple',{b:$('#qBuy').value,s:$('#qSell').value,n:$('#qN').value,y:$('#qSym').value});
+  LS.set('simple',{b:$('#qBuy').value,s:$('#qSell').value,n:$('#qN').value,y:$('#qSym').value,e:$('#qExp').value});$('#closeS').innerHTML=closeHTML($('#qExp').value);
   if(!(B>0)){$('#qCap').innerHTML='';$('#qHero').innerHTML='<div class="k">اكتب السعر الذي اشتريت به العقد</div><div class="s">مثال: 0.18</div>';$('#qRows').innerHTML='';$('#qTbl').innerHTML='<div class="empty">اكتب سعر الشراء ليظهر جدول البيع</div>';return}
   const bf=legFees(b,B,N,'buy'),paid=B*100*N+bf.total,rate=b.fxRate;
   // breakeven sell price
@@ -788,10 +792,10 @@ function renderSimple(){
    <div class="row"><span class="k"><b>البيع</b> · قيمة العقد</span>${usd(Sl*100*N)}</div><div class="row"><span class="k">العمولة</span>${usd(sf.comm)}</div><div class="row"><span class="k">رسوم الطرف الثالث</span>${usd(sf.reg)}</div><div class="row"><span class="k">الضريبة</span>${usd(sf.vat)}</div><div class="row tot"><span>إجمالي البيع</span>${usd(got)}</div>
    <div class="row tot"><span>الصافي</span><span class="${sg(net)}">${usd(net)}</span></div>`;
 }
-(()=>{const q=LS.get('simple',{});$('#qBuy').value=q.b||'';$('#qSell').value=q.s||'';$('#qN').value=q.n||'1';$('#qSym').value=q.y||'';
- ['#qBuy','#qSell','#qN','#qSym'].forEach(x=>$(x).addEventListener('input',renderSimple));
+(()=>{const q=LS.get('simple',{});$('#qBuy').value=q.b||'';$('#qSell').value=q.s||'';$('#qN').value=q.n||'1';$('#qSym').value=q.y||'';$('#qExp').value=q.e||'';
+ ['#qBuy','#qSell','#qN','#qSym','#qExp'].forEach(x=>$(x).addEventListener('input',renderSimple));$('#qExp').addEventListener('change',renderSimple);
  $('#qSave').onclick=()=>{const B=num($('#qBuy').value),Sl=num($('#qSell').value);if(!(B>0))return toast('اكتب سعر الشراء');
-  trades.push({id:Date.now().toString(36),type:'put',sym:($('#qSym').value||'—').toUpperCase(),broker:'sahm',S:0,K:0,P:B,N:Math.max(1,Math.round(num($('#qN').value)||1)),D:0,date:today(),exit:Sl>=0&&$('#qSell').value!==''?Sl:null,closed:today()});
+  trades.push({id:Date.now().toString(36),type:'put',sym:($('#qSym').value||'—').toUpperCase(),broker:'sahm',S:0,K:0,P:B,N:Math.max(1,Math.round(num($('#qN').value)||1)),D:0,exp:$('#qExp').value||'',date:today(),exit:Sl>=0&&$('#qSell').value!==''?Sl:null,closed:today()});
   saveTrades();toast('حُفظت في السجل')}})();
 
 /* ---------- wiring ---------- */
@@ -802,7 +806,7 @@ function bindCalc(){
   $$('#cpSeg button').forEach(b=>b.onclick=()=>{st.type=b.dataset.v;$$('#cpSeg button').forEach(x=>x.setAttribute('aria-pressed',x===b));saveState();calc()});
   $$('#cpSeg button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===st.type));
   $('#saveTrade').onclick=()=>{
-    const t={id:Date.now().toString(36),type:st.type,sym:(st.sym||'').toUpperCase().trim()||'—',broker:st.broker,S:num(st.S),K:num(st.K),P:num(st.P),N:Math.max(1,Math.round(num(st.N)||1)),D:num(st.D)||0,iv:num(st.IV)||null,date:today(),exit:null};
+    const t={id:Date.now().toString(36),type:st.type,sym:(st.sym||'').toUpperCase().trim()||'—',broker:st.broker,S:num(st.S),K:num(st.K),P:num(st.P),N:Math.max(1,Math.round(num(st.N)||1)),D:num(st.D)||0,iv:num(st.IV)||null,exp:st.ED||'',date:today(),exit:null};
     if(!(t.K>0&&t.P>0))return toast('أكمل بيانات الصفقة أولًا');
     trades.push(t);saveTrades();toast('حُفظت في السجل');
   };
@@ -1067,7 +1071,7 @@ async function fhQuote(sym){
     const j=await r.json();if(!j||!(j.c>0))throw new Error('NOSYM');return j}
   catch(e){if(e.name==='AbortError')throw new Error('TIMEOUT');throw e}finally{clearTimeout(tm)}}
 function fhMsg(e){return ({NOKEY:'ضع مفتاح Finnhub في الإعدادات أولًا',BADKEY:'المفتاح مرفوض؛ تأكد منه',LIMIT:'تجاوزت حد الطلبات؛ انتظر دقيقة',NOSYM:'الرمز غير موجود أو لا سعر له الآن',TIMEOUT:'انتهت المهلة؛ تأكد من الاتصال'})[e.message]||'تعذّر الجلب ('+e.message+')'}
-function fhTime(t){if(!t)return '';const d=new Date(t*1000),ago=(Date.now()-d)/60000;const hm=d.toLocaleTimeString('ar-SA',{hour:'2-digit',minute:'2-digit'});return ago>180?'آخر إغلاق · '+d.toLocaleDateString('ar-SA',{day:'numeric',month:'short'})+' '+hm:hm}
+function fhTime(t){if(!t)return '';const d=new Date(t*1000),ago=(Date.now()-d)/60000;const hm=d.toLocaleTimeString('ar-SA-u-ca-gregory-nu-latn',{hour:'2-digit',minute:'2-digit'});return ago>180?'آخر إغلاق · '+d.toLocaleDateString('ar-SA-u-ca-gregory-nu-latn',{day:'numeric',month:'short'})+' '+hm:hm}
 $$('.getq').forEach(b=>b.onclick=async()=>{
   const symEl=$('#'+b.dataset.sym),sym=(symEl.value||'').trim().toUpperCase(),info=b.parentElement.querySelector('.qinfo');
   if(!sym){info.textContent='اكتب الرمز أولًا';return}
@@ -1116,6 +1120,34 @@ $$('.symsel').forEach(sel=>sel.onchange=()=>{
   if(fhKey())btn.click()});
 $('#sym').addEventListener('change',fillSymSels);$('#qSym').addEventListener('change',fillSymSels);
 fillSymSels();
+
+/* وقت إغلاق العقد: 4:00 م بتوقيت نيويورك → توقيت السعودية */
+const LOC='ar-SA-u-ca-gregory-nu-latn';
+function closeUTC(ds){const [y,m,d]=ds.split('-').map(Number);
+  for(const off of [4,5]){const t=new Date(Date.UTC(y,m-1,d,16+off));
+    if(+new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour:'numeric',hourCycle:'h23'}).format(t)===16)return t}
+  return new Date(Date.UTC(y,m-1,d,21))}
+function nyToday(){return new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York'}).format(new Date())}
+function daysTo(ds){const [a,b,c]=ds.split('-').map(Number),[x,y,z]=nyToday().split('-').map(Number);return Math.round((Date.UTC(a,b-1,c)-Date.UTC(x,y-1,z))/864e5)}
+function arN(n,one,two,few,many){return n===1?one:n===2?two:n>=3&&n<=10?n+' '+few:n+' '+many}
+function closeInfo(ds){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(ds||''))return null;
+  const t=closeUTC(ds),ms=t-Date.now(),[y,m,d]=ds.split('-').map(Number),wd=new Date(Date.UTC(y,m-1,d)).getUTCDay();
+  const ksaDay=new Intl.DateTimeFormat(LOC,{timeZone:'Asia/Riyadh',weekday:'long',day:'numeric',month:'long'}).format(t);
+  const hh=+new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Riyadh',hour:'numeric',hourCycle:'h23'}).format(t);
+  const tm=new Intl.DateTimeFormat(LOC,{timeZone:'Asia/Riyadh',hour:'numeric',minute:'2-digit',hour12:true}).format(t);
+  const expDay=new Intl.DateTimeFormat(LOC,{timeZone:'UTC',weekday:'long'}).format(new Date(Date.UTC(y,m-1,d)));
+  let left;if(ms<=0)left='انتهى التداول على هذا العقد';else{const mi=Math.floor(ms/6e4),D=Math.floor(mi/1440),H=Math.floor(mi%1440/60),M=mi%60;left='باقي '+(D?arN(D,'يوم','يومان','أيام','يومًا')+' ':'')+(D||H?arN(H,'ساعة','ساعتان','ساعات','ساعة')+' ':'')+(D?'':arN(M,'دقيقة','دقيقتان','دقائق','دقيقة'))}
+  return {t,ms,wd,when:ksaDay+' · '+tm+(hh<6?' (بعد منتصف ليل '+expDay+')':''),left:left.trim(),short:new Intl.DateTimeFormat(LOC,{timeZone:'Asia/Riyadh',weekday:'short',hour:'numeric',minute:'2-digit',hour12:true}).format(t)}}
+function closeHTML(ds){const c=closeInfo(ds);if(!c)return '';
+  const wk=(c.wd===0||c.wd===6)?'<br><b>تنبيه: هذا التاريخ عطلة نهاية أسبوع، والعقود لا تنتهي فيها. راجع التاريخ في سهم.</b>':'';
+  const cls=c.ms<=0?'bad':c.ms<864e5?'warn':'info';
+  return `<div class="alert ${cls}" style="line-height:1.8"><div><b>يقفل التداول على العقد:</b> ${c.when} بتوقيت السعودية<br><b>${c.left}</b>${wk}<br><span class="small">الإغلاق 4:00 م نيويورك (بعض عقود ETF حتى 4:15). الخروج المبكر أسلم؛ في الحساب النقدي يُغلق العقد الرابح تلقائيًا قبل الإغلاق (سهم لم تحدد الدقيقة).</span></div></div>`}
+function closeLine(ds){const c=closeInfo(ds);if(!c)return '';return `<div class="t2" style="color:var(--${c.ms<=0?'bad':c.ms<864e5?'warn':'ink-2'})">يقفل ${c.short} · ${c.left}</div>`}
+function updClose(){$('#closeC').innerHTML=closeHTML($('#ED').value);$('#closeS').innerHTML=closeHTML($('#qExp').value)}
+$('#ED').addEventListener('input',()=>{const v=$('#ED').value;if(v){const n=Math.max(0,daysTo(v));$('#D').value=n;st.D=String(n);st.ED=v;saveState();calc()}updClose()});
+$('#D').addEventListener('input',()=>{const v=$('#ED').value;if(v&&daysTo(v)!==num($('#D').value)){$('#ED').value='';st.ED='';saveState();updClose()}});
+updClose();setInterval(()=>{updClose();if(!$('[data-view=log]').hidden)renderLog()},60000);
 
 /* init */
 $('#verLbl').textContent=APP_VER;
