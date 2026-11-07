@@ -175,6 +175,48 @@ details.more summary::-webkit-details-marker{display:none}
 .fold.fold-closed > :not(.card-h){display:none!important}.fold.fold-closed > .card-h{margin-bottom:0}
 .foot{font-size:11.5px;color:var(--muted);text-align:center;line-height:1.6;margin-top:4px}
 .foot a{color:var(--accent)}
+
+/* ===== صقل التصميم v1.18 ===== */
+.top{background:color-mix(in srgb,var(--bg) 84%,transparent);-webkit-backdrop-filter:saturate(1.5) blur(16px);backdrop-filter:saturate(1.5) blur(16px)}
+.logo{background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 88%,#fff),var(--accent));box-shadow:0 4px 12px color-mix(in srgb,var(--accent) 35%,transparent)}
+.card{box-shadow:var(--shadow);border-radius:18px;transition:box-shadow .2s}
+.card-h h2{letter-spacing:-.1px}
+.view:not([hidden]){animation:vin .3s cubic-bezier(.2,.7,.2,1) both}
+@keyframes vin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.view:not([hidden]){animation:none}}
+.btn,.icon-btn,.tab,.seg button,.favc{transition:transform .12s ease,background-color .18s,border-color .18s,box-shadow .18s}
+.btn:active,.icon-btn:active,.tab:active,.favc:active{transform:scale(.95)}
+.btn.primary{background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 90%,#fff),var(--accent));box-shadow:0 6px 16px color-mix(in srgb,var(--accent) 30%,transparent)}
+.field:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent);background:var(--surface)}
+select.field{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%2376837D' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-position:left 14px center;background-size:12px 8px;background-repeat:no-repeat;padding-left:36px}
+.hero{position:relative;overflow:hidden;border-radius:22px;background:linear-gradient(155deg,color-mix(in srgb,var(--accent) 92%,#fff) 0%,var(--accent) 45%,color-mix(in srgb,var(--accent) 78%,#04271c) 130%);box-shadow:0 14px 34px color-mix(in srgb,var(--accent) 28%,transparent),0 2px 6px rgba(0,0,0,.08)}
+.hero::before{content:"";position:absolute;inset-inline-start:-40px;top:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.22),transparent 68%);pointer-events:none}
+.hero::after{content:"";position:absolute;inset-inline-end:-30px;bottom:-70px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.10),transparent 70%);pointer-events:none}
+.hero>*{position:relative;z-index:1}
+.hero .v{font-size:40px;letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.tile{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.14);border-radius:14px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.tabs,.tabbar,nav.tabs{box-shadow:0 -6px 24px rgba(0,0,0,.06)}
+.tab svg{box-sizing:content-box;padding:4px 18px;border-radius:999px;transition:background-color .2s}
+.tab{gap:1px;padding-top:7px}
+.tab[aria-current="page"] svg{background:var(--accent-soft)}
+.tab[aria-current="page"]{font-weight:600}
+/* شريط السوق */
+#mktBar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:14px;background:var(--surface);border:1px solid var(--line);font-size:12.5px;color:var(--ink-2);margin-bottom:14px;box-shadow:var(--shadow)}
+#mktBar .dot{width:9px;height:9px;border-radius:50%;background:var(--muted);flex:none}
+#mktBar.open .dot{background:var(--good);box-shadow:0 0 0 0 color-mix(in srgb,var(--good) 55%,transparent);animation:pulse 2s infinite}
+#mktBar b{color:var(--ink);font-weight:600}
+@keyframes pulse{70%{box-shadow:0 0 0 8px transparent}100%{box-shadow:0 0 0 0 transparent}}
+/* بطاقات المفضلة */
+#favList{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;margin:0 -4px;padding:2px 4px 6px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+#favList::-webkit-scrollbar{display:none}
+.favc{flex:none;scroll-snap-align:start;min-width:96px;text-align:start;background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:9px 11px;cursor:pointer;color:inherit;font:inherit;display:flex;flex-direction:column;gap:1px}
+.favc .sy{font-family:var(--f-display);font-weight:600;font-size:14px}
+.favc .pr{font-size:15px;font-weight:600}
+.favc .ch{font-size:12px;font-weight:600}
+.favc.up{border-inline-start:3px solid var(--good)}.favc.dn{border-inline-start:3px solid var(--bad)}
+.favc.sel{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 25%,transparent);background:var(--accent-soft)}
+.closebox summary{cursor:pointer;color:var(--ink-2);font-size:12px;margin-top:4px;list-style:none}
+.closebox summary::-webkit-details-marker{display:none}
 </style>
 </head>
 <body>
@@ -192,6 +234,7 @@ details.more summary::-webkit-details-marker{display:none}
 </div></header>
 
 <main class="wrap">
+<div id="mktBar" aria-live="polite"><i class="dot"></i><span id="mktTxt">…</span></div>
 
 <section class="view" data-view="simple">
   <div class="card">
@@ -434,7 +477,7 @@ details.more summary::-webkit-details-marker{display:none}
 
 <script>
 "use strict";
-const APP_VER='1.17',APP_BUILT='2026-11-07';
+const APP_VER='1.18',APP_BUILT='2026-11-07';
 /* ---------- helpers ---------- */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const num=v=>{v=String(v??'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[٫,]/g,'.');const n=parseFloat(v);return isFinite(n)?n:NaN};
@@ -1092,9 +1135,10 @@ const FAV_DEF=['SPCX','TSLA','AAPL','RKLB','TSM','NVDA','AMD'];
 function favList(){const l=LS.get('fav',null);return Array.isArray(l)&&l.length?l:FAV_DEF}
 function renderFav(){
   const q=LS.get('favq',{});
-  $('#favList').innerHTML=favList().map(sy=>{const x=q[sy];const up=x&&x.dp>=0;
-    return `<button type="button" class="row favrow" data-sym="${sy}" style="width:100%;background:none;border:0;border-top:1px solid var(--line);padding:10px 2px;cursor:pointer;color:inherit;font:inherit;text-align:start"><b class="num" style="min-width:56px;text-align:start">${sy}</b><span style="flex:1;text-align:end">${x?`<b class="num">$${f2(x.c)}</b> <span class="num small" style="color:var(--${up?'good':'bad'})">${up?'+':''}${f2(x.dp)}%</span>`:'<span class="small muted">—</span>'}</span></button>`}).join('');
-  $$('.favrow').forEach(b=>b.onclick=()=>{const sy=b.dataset.sym,x=(LS.get('favq',{}))[sy];$('#sym').value=sy;if(x){$('#S').value=x.c}$('#S').dispatchEvent(new Event('input',{bubbles:true}));$('#qSym').value=sy;fillSymSels();window.scrollTo({top:document.querySelector('#sym').getBoundingClientRect().top+scrollY-90,behavior:'smooth'});if(!x)$('[data-into=S]').click()});
+  const cur=($('#sym').value||'').trim().toUpperCase();
+  $('#favList').innerHTML=favList().map(sy=>{const x=q[sy],up=x&&x.dp>=0;
+    return `<button type="button" class="favc ${x?(up?'up':'dn'):''} ${sy===cur?'sel':''}" data-sym="${sy}"><span class="sy">${sy}</span>${x?`<span class="pr num">$${f2(x.c)}</span><span class="ch num" style="color:var(--${up?'good':'bad'})">${up?'+':''}${f2(x.dp)}%</span>`:'<span class="pr muted">—</span><span class="ch muted">لا سعر</span>'}</button>`}).join('');
+  $$('.favc').forEach(b=>b.onclick=()=>{const sy=b.dataset.sym,x=(LS.get('favq',{}))[sy];$('#sym').value=sy;if(x){$('#S').value=x.c}$('#S').dispatchEvent(new Event('input',{bubbles:true}));$('#qSym').value=sy;fillSymSels();window.scrollTo({top:document.querySelector('#sym').getBoundingClientRect().top+scrollY-90,behavior:'smooth'});if(!x)$('[data-into=S]').click()});
   $('#favEdit').value=favList().join(', ')}
 $('#favEdit').onchange=e=>{const l=[...new Set(e.target.value.toUpperCase().split(/[\s,،;]+/).filter(x=>/^[A-Z.\-]{1,6}$/.test(x)))].slice(0,20);LS.set('fav',l.length?l:FAV_DEF);renderFav();fillSymSels()};
 $('#favRef').onclick=async()=>{
@@ -1142,12 +1186,26 @@ function closeInfo(ds){
 function closeHTML(ds){const c=closeInfo(ds);if(!c)return '';
   const wk=(c.wd===0||c.wd===6)?'<br><b>تنبيه: هذا التاريخ عطلة نهاية أسبوع، والعقود لا تنتهي فيها. راجع التاريخ في سهم.</b>':'';
   const cls=c.ms<=0?'bad':c.ms<864e5?'warn':'info';
-  return `<div class="alert ${cls}" style="line-height:1.8"><div><b>يقفل التداول على العقد:</b> ${c.when} بتوقيت السعودية<br><b>${c.left}</b>${wk}<br><span class="small">الإغلاق 4:00 م نيويورك (بعض عقود ETF حتى 4:15). الخروج المبكر أسلم؛ في الحساب النقدي يُغلق العقد الرابح تلقائيًا قبل الإغلاق (سهم لم تحدد الدقيقة).</span></div></div>`}
+  return `<div class="alert ${cls}" style="line-height:1.8"><div><b>يقفل التداول على العقد:</b> ${c.when} بتوقيت السعودية<br><b>${c.left}</b>${wk}<details class="closebox"><summary>ملاحظات عن وقت الإغلاق ›</summary><span class="small">الإغلاق 4:00 م نيويورك (بعض عقود ETF حتى 4:15). الخروج المبكر أسلم؛ في الحساب النقدي يُغلق العقد الرابح تلقائيًا قبل الإغلاق (سهم لم تحدد الدقيقة).</span></details></div></div>`}
 function closeLine(ds){const c=closeInfo(ds);if(!c)return '';return `<div class="t2" style="color:var(--${c.ms<=0?'bad':c.ms<864e5?'warn':'ink-2'})">يقفل ${c.short} · ${c.left}</div>`}
 function updClose(){$('#closeC').innerHTML=closeHTML($('#ED').value);$('#closeS').innerHTML=closeHTML($('#qExp').value)}
 $('#ED').addEventListener('input',()=>{const v=$('#ED').value;if(v){const n=Math.max(0,daysTo(v));$('#D').value=n;st.D=String(n);st.ED=v;saveState();calc()}updClose()});
 $('#D').addEventListener('input',()=>{const v=$('#ED').value;if(v&&daysTo(v)!==num($('#D').value)){$('#ED').value='';st.ED='';saveState();updClose()}});
 updClose();setInterval(()=>{updClose();if(!$('[data-view=log]').hidden)renderLog()},60000);
+
+/* حالة السوق الأمريكي (دون العطل الرسمية) */
+function nyWall(y,m,d,h,mi){for(const off of [4,5]){const t=new Date(Date.UTC(y,m-1,d,h+off,mi));if(+new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour:'numeric',hourCycle:'h23'}).format(t)===h)return t}return new Date(Date.UTC(y,m-1,d,h+5,mi))}
+function mktStatus(){
+  const now=new Date(),f=new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York'}).format(now),[y,m,d]=f.split('-').map(Number);
+  const wd=new Date(Date.UTC(y,m-1,d)).getUTCDay(),op=nyWall(y,m,d,9,30),cl=nyWall(y,m,d,16,0);
+  const tm=t=>new Intl.DateTimeFormat(LOC,{timeZone:'Asia/Riyadh',hour:'numeric',minute:'2-digit',hour12:true}).format(t);
+  const dur=ms=>{const mi=Math.max(1,Math.round(ms/6e4)),D=Math.floor(mi/1440),H=Math.floor(mi%1440/60),M=mi%60;return ((D?D+' يوم ':'')+(H?H+' س ':'')+(D?'':M+' د')).trim()};
+  if(wd>=1&&wd<=5&&now>=op&&now<cl)return {open:true,txt:`<b>السوق الأمريكي مفتوح</b> · يغلق بعد ${dur(cl-now)} (${tm(cl)} السعودية)`};
+  let t=new Date(op),k=0;if(!(wd>=1&&wd<=5&&now<op)){do{k++;const n=new Date(Date.UTC(y,m-1,d+k));if(n.getUTCDay()>=1&&n.getUTCDay()<=5){t=nyWall(n.getUTCFullYear(),n.getUTCMonth()+1,n.getUTCDate(),9,30);break}}while(k<7)}
+  const dn=new Intl.DateTimeFormat(LOC,{timeZone:'Asia/Riyadh',weekday:'long'}).format(t);
+  return {open:false,txt:`<b>السوق الأمريكي مغلق</b> · يفتح ${dn} ${tm(t)} (بعد ${dur(t-now)})`}}
+function updMkt(){const s=mktStatus();$('#mktBar').classList.toggle('open',s.open);$('#mktTxt').innerHTML=s.txt}
+updMkt();setInterval(updMkt,30000);
 
 /* init */
 $('#verLbl').textContent=APP_VER;
