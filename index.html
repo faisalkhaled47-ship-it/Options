@@ -342,22 +342,23 @@ function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeou
 const FEE_FIELDS=[
  ['commHi','عمولة/عقد (سعر العقد > 0.10)'],['minHi','حد أدنى للصفقة'],
  ['commLo','عمولة/عقد (سعر العقد ≤ 0.10)'],['minLo','حد أدنى للصفقة (رخيص)'],
- ['orf','ORF لكل عقد'],['occ','مقاصة OCC لكل عقد'],
+ ['orf','ORF لكل عقد'],['settle','رسوم التسوية/البورصة لكل عقد'],['occ','مقاصة OCC لكل عقد'],
  ['taf','FINRA TAF لكل عقد (بيع)'],['sec','SEC % من القيمة (بيع)'],
  ['vat','ضريبة القيمة المضافة % على الرسوم'],['fxRate','سعر الصرف الأساسي'],
  ['fxSpread','هامش الوسيط على الصرف %'],['fxFee','رسم ثابت لكل تحويل (ر.س)']];
-const SAHM={name:'سهم',commHi:0.99,minHi:1.99,commLo:0.49,minLo:0.99,orf:0.0187,occ:0.02,taf:0.00329,sec:0.00206,vat:15,fxRate:3.75,fxSpread:0,fxFee:0,
- note:'رسوم سهم من موقعهم الرسمي (تحديث 27 يناير 2026). هامش الصرف لم يُنشر بوضوح، أدخله من شاشة التحويل في التطبيق.'};
+const SAHM={name:'سهم',commHi:0.99,minHi:1.99,commLo:0.49,minLo:0.99,orf:0.0187,settle:0.18,occ:0.02,taf:0.00329,sec:0.00206,vat:15,fxRate:3.75,fxSpread:0,fxFee:0,
+ note:'رسوم سهم من موقعهم الرسمي (27 يناير 2026)، ومُعايَرة على كشف صفقة فعلية: عمولة 1.99 + رسوم طرف ثالث ≈0.22 شراء و0.24 بيع + ضريبة 15%. هامش الصرف لم يُنشر بوضوح، أدخله من شاشة التحويل في التطبيق.'};
 const DEF_BROKERS={sahm:SAHM,abyan:{...SAHM,name:'أبيان',note:'هذه قيم مبدئية منسوخة من سهم. عدّلها من جدول رسوم أبيان أو من كشف أول صفقة.'},custom:{...SAHM,name:'مخصص',note:'أدخل رسوم أي وسيط آخر.'}};
 let brokers=LS.get('brokers',null)||structuredClone(DEF_BROKERS);
 for(const k in DEF_BROKERS) if(!brokers[k]) brokers[k]=structuredClone(DEF_BROKERS[k]);
+for(const k in brokers) if(brokers[k].settle==null) brokers[k].settle=0.18;
 
 /* fees for one leg. side: 'buy'|'sell' */
 function legFees(b,price,n,side){
   if(!(n>0))return {comm:0,reg:0,vat:0,total:0};
   const lo=price<=0.1;
   const comm=Math.max((lo?b.commLo:b.commHi)*n,lo?b.minLo:b.minHi);
-  let reg=b.orf*n+Math.min(b.occ*n,55);
+  let reg=(b.orf+(b.settle||0))*n+Math.min(b.occ*n,55);
   if(side==='sell'){reg+=Math.max(b.taf*n,0.01)+Math.max(price*100*n*b.sec/100,0.01)}
   const vat=(comm+reg)*b.vat/100;
   return {comm,reg,vat,total:comm+reg+vat};
