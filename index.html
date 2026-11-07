@@ -384,7 +384,7 @@ details.more summary::-webkit-details-marker{display:none}
 
 <script>
 "use strict";
-const APP_VER='1.11',APP_BUILT='2026-11-07';
+const APP_VER='1.12',APP_BUILT='2026-11-07';
 /* ---------- helpers ---------- */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const num=v=>{v=String(v??'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[٫,]/g,'.');const n=parseFloat(v);return isFinite(n)?n:NaN};
@@ -816,15 +816,15 @@ const AI_MODELS=[['claude-sonnet-5-5','Sonnet 5.5 · متوازن (مستحسن)
 const aiCfg=()=>{const own=LS.get('ai',{});if(!own.key){try{const m=JSON.parse(localStorage.getItem('masrufi.ai.v1')||'{}');if(m.key)return {key:m.key,model:own.model||m.model}}catch(e){}}return own};
 const aiModel=()=>aiCfg().model||AI_MODELS[0][0];
 let aiMsgs=[],aiCtl=null;
-function aiErrMsg(c,m){return c==='nokey'?'أضف مفتاح Claude API من الإعدادات ⚙️ أولًا.':c===401?'مفتاح API غير صحيح.':c===429?'تجاوزت حد الطلبات أو نفد الرصيد. انتظر قليلًا.':(c===529||c===503||c===500)?'خدمة Claude مزدحمة، أعد المحاولة.':c===404?'اسم النموذج غير معروف، اختر نموذجًا آخر.':c==='net'?'لا يوجد اتصال بالإنترنت.':c==='stop'?'أُوقف.':c==='timeout'?'تأخر الرد أكثر من 90 ثانية. أعد المحاولة أو اختر Haiku.':c==='empty'?'وصل رد فارغ. أعد المحاولة.':(m||String(c))}
+function aiErrMsg(c,m){return c==='nokey'?'أضف مفتاح Claude API من الإعدادات ⚙️ أولًا.':c===401?'مفتاح API غير صحيح.':c===429?'تجاوزت حد الطلبات أو نفد الرصيد. انتظر قليلًا.':(c===529||c===503||c===500)?'خدمة Claude مزدحمة، أعد المحاولة.':c===404?'اسم النموذج غير معروف، اختر نموذجًا آخر.':c==='net'?'لا يوجد اتصال بالإنترنت.':c==='stop'?'أُوقف.':c==='timeout'?'تأخر الرد أكثر من 90 ثانية. أعد المحاولة أو اختر Haiku.':c==='empty'?('وصل رد بلا نص'+(m&&/refusal/.test(m)?': النموذج امتنع عن الإجابة، أعد صياغة السؤال.':m&&/max_tokens/.test(m)?': استهلك التفكير كل المساحة، أعد المحاولة.':'. أعد المحاولة.')+(m?' ('+m+')':'')):(m||String(c))}
 async function aiCall(system,messages,onText){
   const key=(aiCfg().key||'').trim();if(!key)throw {code:'nokey'};
   aiCtl=new AbortController();let timedOut=false;const to=setTimeout(()=>{timedOut=true;aiCtl.abort()},90000);
   const H={'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};
-  const body=st=>JSON.stringify({model:aiModel(),max_tokens:1600,stream:st,system,messages});
+  const body=st=>JSON.stringify({model:aiModel(),max_tokens:8000,stream:st,system,messages});
   const fail=async r=>{let m='';try{m=JSON.parse(await r.text()).error.message}catch(e){}throw {code:r.status,msg:m}};
   try{
-    let out='';
+    let out='',stop='';
     // 1) streaming
     try{
       const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',signal:aiCtl.signal,cache:'no-store',headers:H,body:body(true)});
@@ -833,13 +833,14 @@ async function aiCall(system,messages,onText){
         for(;;){const x=await rd.read();if(x.done)break;buf+=dec.decode(x.value,{stream:true});const L=buf.split('\n');buf=L.pop();
           for(const ln of L){if(!ln.startsWith('data:'))continue;let ev;try{ev=JSON.parse(ln.slice(5))}catch(e){continue}
             if(ev.type==='content_block_delta'&&ev.delta&&ev.delta.type==='text_delta'){out+=ev.delta.text;onText(out)}
+            else if(ev.type==='message_delta'&&ev.delta&&ev.delta.stop_reason)stop=ev.delta.stop_reason
             else if(ev.type==='error')throw {code:ev.error&&ev.error.type==='overloaded_error'?529:'api',msg:ev.error&&ev.error.message}}}}
     }catch(e){if(e&&(e.code||e.msg))throw e;if(aiCtl.signal.aborted)throw e;out=''}
     // 2) لم يصل نص بالبث: طلب عادي بدون بث
     if(!out.trim()){onText('… جارٍ تجهيز الرد');
       const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',signal:aiCtl.signal,cache:'no-store',headers:H,body:body(false)});
-      if(!r.ok)await fail(r);const j=await r.json();out=(j.content||[]).filter(c=>c.type==='text').map(c=>c.text).join('\n');
-      if(!out.trim())throw {code:'empty'};onText(out)}
+      if(!r.ok)await fail(r);const j=await r.json();out=(j.content||[]).filter(c=>c.type==='text').map(c=>c.text).join('\n');stop=j.stop_reason||stop;
+      if(!out.trim())throw {code:'empty',msg:stop+' · '+(j.content||[]).map(c=>c.type).join(',')};onText(out)}
     return out;
   }catch(e){if(e&&e.name==='AbortError')throw {code:timedOut?'timeout':'stop'};if(e&&e.code)throw e;throw {code:'net'}}
   finally{clearTimeout(to)}
