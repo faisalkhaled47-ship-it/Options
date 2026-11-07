@@ -205,6 +205,7 @@ details.more summary::-webkit-details-marker{display:none}
         <div><label class="lbl" for="qN">عدد العقود</label><input class="field" id="qN" inputmode="numeric" value="1"></div>
         <div><label class="lbl" for="qSym">الرمز (اختياري)</label><input class="field" id="qSym" placeholder="TSLA" autocapitalize="characters"></div>
       </div>
+      <div style="display:flex;gap:8px;align-items:center"><button class="btn getq" type="button" data-sym="qSym" style="flex:none;min-height:34px;padding:4px 10px;font-size:13px">↻ سعر السهم الآن</button><span class="small muted qinfo" id="qiS"></span></div>
     </div>
   </div>
   <div class="card hero" id="qHero"></div>
@@ -228,6 +229,7 @@ details.more summary::-webkit-details-marker{display:none}
         <div><label class="lbl" for="S">سعر السهم الآن $</label><input class="field" id="S" inputmode="decimal" value="360"></div>
         <div><label class="lbl" for="K">سعر التنفيذ $</label><input class="field" id="K" inputmode="decimal" value="380"></div>
       </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:-4px"><button class="btn getq" type="button" data-sym="sym" data-into="S" style="flex:none;min-height:34px;padding:4px 10px;font-size:13px">↻ جلب سعر السهم اللحظي</button><span class="small muted qinfo" id="qiC"></span></div>
       <div class="grid3">
         <div><label class="lbl" for="P">سعر العقد</label><input class="field" id="P" inputmode="decimal" value="12.50"></div>
         <div><label class="lbl" for="N">عدد العقود</label><input class="field" id="N" inputmode="numeric" value="1"></div>
@@ -376,6 +378,11 @@ details.more summary::-webkit-details-marker{display:none}
     <div class="btns" style="align-items:center"><button class="btn primary" id="clTest" type="button">جرّب المفتاح</button><span class="small" id="clRes"></span></div>
     <p id="clNote">من platform.claude.com. يبقى على جهازك فقط، ولا يدخل في النسخة الاحتياطية ولا المزامنة.</p>
   </div>
+  <div class="sec sfold" id="setQuote"><div class="card-h"><h2>سعر السهم اللحظي (Finnhub)</h2><span class="hint" id="fhSum"></span></div>
+    <label class="lbl" for="fhKey">مفتاح Finnhub</label><input class="field" type="password" id="fhKey" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="مفتاحك من finnhub.io">
+    <div class="btns" style="align-items:center"><button class="btn primary" id="fhTest" type="button">جرّب المفتاح</button><span class="small" id="fhRes"></span></div>
+    <p>يبقى على جهازك فقط، ولا يدخل في النسخة الاحتياطية ولا المزامنة. ينبغي أن يكون السعر من الباقة المجانية؛ قد يتأخر قليلًا، وتظهر الساعة بجانبه. سعر العقد نفسه خذه من سهم.</p>
+  </div>
   <div class="sec sfold" id="setSync"><div class="card-h"><h2>المزامنة بين أجهزتك</h2><span class="hint" id="sbSum">Supabase</span></div><div id="sbSec" class="stack"></div></div>
   <div class="set-grp">البيانات</div>
   <div class="sec sfold" id="setData"><div class="card-h"><h2>النسخ الاحتياطي والتصدير</h2></div>
@@ -415,7 +422,7 @@ details.more summary::-webkit-details-marker{display:none}
 
 <script>
 "use strict";
-const APP_VER='1.13',APP_BUILT='2026-11-07';
+const APP_VER='1.14',APP_BUILT='2026-11-07';
 /* ---------- helpers ---------- */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const num=v=>{v=String(v??'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[٫,]/g,'.');const n=parseFloat(v);return isFinite(n)?n:NaN};
@@ -1030,7 +1037,7 @@ function renderSettings(){
   $('#setBroker').value=st.broker in brokers?st.broker:'sahm';renderFeeForm();sbRender();
   const cap=num(LS.get('cap',''));$('#sCapUsd').value=cap>0?+cap.toFixed(2):'';$('#sCapSar').value=cap>0?+(cap*RATE()).toFixed(2):'';$('#capSum').textContent=cap>0?'$'+f2(cap):'غير محدد';
   const b=brokers.sahm;$('#fxR').value=+RATE().toFixed(4);$('#fxF').value=b.fxFee||0;$('#fxSum').textContent=f2(RATE(),4);
-  $('#feeSum').textContent=(brokers[st.broker]||b).name;$('#aiSum').textContent=aiCfg().key?'مفعّل':'غير مفعّل';$('#sbSum').textContent=sbOn()?'متصل':'Supabase';
+  $('#feeSum').textContent=(brokers[st.broker]||b).name;$('#aiSum').textContent=aiCfg().key?'مفعّل':'غير مفعّل';$('#fhKey').value=fhKey();$('#fhSum').textContent=fhKey()?'مفعّل':'غير مفعّل';$('#sbSum').textContent=sbOn()?'متصل':'Supabase';
   $$('#startSeg button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===LS.get('start','simple')));
   $('#aboutTxt').innerHTML=`خياراتي · الإصدار <span class="num">${APP_VER}</span><br>${APP_BUILT}`}
 $('#openSettings').onclick=()=>{renderSettings();$('#setSheet').hidden=false};
@@ -1041,6 +1048,32 @@ $('#fxF').onchange=e=>{brokers.sahm.fxFee=num(e.target.value)||0;LS.set('brokers
 $('#csvBtn').onclick=()=>{const rows=[['التاريخ','الرمز','النوع','التنفيذ','العقود','الدخول','الخروج','الرسوم $','الصافي $','الصافي ر.س']];
   trades.forEach(t=>{const r=tradeNet(t);rows.push([t.date,t.sym,t.K?t.type:'',t.K||'',t.N,t.P,t.exit??'',r.fees.toFixed(2),r.net==null?'':r.net.toFixed(2),r.net==null?'':(r.net*RATE()).toFixed(2)])});
   const blob=new Blob(['﻿'+rows.map(r=>r.map(x=>`"${String(x).replace(/"/g,'""')}"`).join(',')).join('\n')],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`khiyarati-trades-${today()}.csv`;a.click()};
+
+/* سعر السهم اللحظي — Finnhub (المفتاح محلي فقط) */
+function fhKey(){try{return (localStorage.getItem('opt_fhkey')||'').trim()}catch(e){return ''}}
+async function fhQuote(sym){
+  const key=fhKey();if(!key)throw new Error('NOKEY');
+  const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),12000);
+  try{const r=await fetch('https://finnhub.io/api/v1/quote?symbol='+encodeURIComponent(sym)+'&token='+encodeURIComponent(key),{signal:ctl.signal});
+    if(r.status===401||r.status===403)throw new Error('BADKEY');if(r.status===429)throw new Error('LIMIT');if(!r.ok)throw new Error('HTTP'+r.status);
+    const j=await r.json();if(!j||!(j.c>0))throw new Error('NOSYM');return j}
+  catch(e){if(e.name==='AbortError')throw new Error('TIMEOUT');throw e}finally{clearTimeout(tm)}}
+function fhMsg(e){return ({NOKEY:'ضع مفتاح Finnhub في الإعدادات أولًا',BADKEY:'المفتاح مرفوض؛ تأكد منه',LIMIT:'تجاوزت حد الطلبات؛ انتظر دقيقة',NOSYM:'الرمز غير موجود أو لا سعر له الآن',TIMEOUT:'انتهت المهلة؛ تأكد من الاتصال'})[e.message]||'تعذّر الجلب ('+e.message+')'}
+function fhTime(t){if(!t)return '';const d=new Date(t*1000),ago=(Date.now()-d)/60000;const hm=d.toLocaleTimeString('ar-SA',{hour:'2-digit',minute:'2-digit'});return ago>180?'آخر إغلاق · '+d.toLocaleDateString('ar-SA',{day:'numeric',month:'short'})+' '+hm:hm}
+$$('.getq').forEach(b=>b.onclick=async()=>{
+  const symEl=$('#'+b.dataset.sym),sym=(symEl.value||'').trim().toUpperCase(),info=b.parentElement.querySelector('.qinfo');
+  if(!sym){info.textContent='اكتب الرمز أولًا';return}
+  if(!fhKey()){info.textContent='ضع المفتاح في الإعدادات > سعر السهم اللحظي';return}
+  b.disabled=true;info.textContent='جارٍ الجلب…';
+  try{const q=await fhQuote(sym);symEl.value=sym;
+    if(b.dataset.into){const t=$('#'+b.dataset.into);t.value=q.c;t.dispatchEvent(new Event('input',{bubbles:true}))}
+    const up=q.dp>=0;info.innerHTML=`<b class="num">$${f2(q.c)}</b> · <span class="num" style="color:var(--${up?'good':'bad'})">${up?'+':''}${f2(q.dp)}%</span> · ${fhTime(q.t)}<br>${f2(q.c*RATE())} ر.س`;
+    LS.set('quote',{sym,c:q.c,t:q.t})}
+  catch(e){info.textContent=fhMsg(e)}finally{b.disabled=false}});
+$('#fhKey').onchange=e=>{try{localStorage.setItem('opt_fhkey',e.target.value.trim())}catch(_){}renderSettings()};
+$('#fhTest').onclick=async()=>{const res=$('#fhRes'),btn=$('#fhTest');try{localStorage.setItem('opt_fhkey',$('#fhKey').value.trim())}catch(_){}
+  btn.disabled=true;res.textContent='جارٍ الاختبار…';
+  try{const q=await fhQuote('AAPL');res.textContent='نجح · AAPL $'+f2(q.c)}catch(e){res.textContent=fhMsg(e)}finally{btn.disabled=false;renderSettings()}};
 
 /* init */
 $('#verLbl').textContent=APP_VER;
