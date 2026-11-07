@@ -344,6 +344,7 @@ details.more summary::-webkit-details-marker{display:none}
   <div class="card sec"><div class="card-h"><h2>المساعد الذكي (Claude)</h2></div>
     <div class="stack"><div><label class="lbl" for="clKey">مفتاح API</label><input class="field" type="password" id="clKey" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="sk-ant-…"></div>
     <div><label class="lbl" for="clModel">النموذج</label><select class="field" id="clModel"></select></div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn primary" id="clTest" type="button">جرّب المفتاح</button><span class="small" id="clRes"></span></div>
     <p class="hint" style="margin:0" id="clNote">من platform.claude.com. يبقى على جهازك فقط، ولا يدخل في النسخة الاحتياطية ولا المزامنة.</p></div></div>
   <div class="card sec"><div class="card-h"><h2>المزامنة بين أجهزتك</h2><span class="hint">Supabase</span></div><div id="sbSec" class="stack"></div></div>
   <div class="set-grp">البيانات</div>
@@ -383,7 +384,7 @@ details.more summary::-webkit-details-marker{display:none}
 
 <script>
 "use strict";
-const APP_VER='1.9',APP_BUILT='2026-11-07';
+const APP_VER='1.10',APP_BUILT='2026-11-07';
 /* ---------- helpers ---------- */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const num=v=>{v=String(v??'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[٫,]/g,'.');const n=parseFloat(v);return isFinite(n)?n:NaN};
@@ -867,6 +868,17 @@ $('#clModel').innerHTML=AI_MODELS.map(m=>`<option value="${m[0]}">${m[1]}</optio
 $('#clModel').value=aiModel();$('#clKey').value=LS.get('ai',{}).key||'';
 if(!LS.get('ai',{}).key&&aiCfg().key)$('#clNote').textContent='يُستخدم مفتاحك المحفوظ في مصروفي. اكتب مفتاحًا هنا إذا أردت مفتاحًا مختلفًا.';
 $('#clKey').onchange=()=>{const o=LS.get('ai',{});o.key=$('#clKey').value.replace(/\s+/g,'');if(!o.key)delete o.key;LS.set('ai',o);toast(o.key?'حُفظ المفتاح':'حُذف المفتاح')};
+
+$('#clTest').onclick=async()=>{
+  const inp=$('#clKey').value.replace(/\s+/g,'');if(inp){const o=LS.get('ai',{});o.key=inp;LS.set('ai',o)}
+  const key=(aiCfg().key||'').trim(),res=$('#clRes'),btn=$('#clTest');
+  if(!key){res.innerHTML='<span class="neg">الصق المفتاح أولًا.</span>';return}
+  btn.disabled=true;res.innerHTML='<span class="muted">جارٍ الاتصال…</span>';
+  try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',cache:'no-store',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:aiModel(),max_tokens:5,messages:[{role:'user',content:'hi'}]})});
+    if(r.ok)res.innerHTML='<span class="pos">✓ متصل · '+esc(AI_MODELS.find(m=>m[0]===aiModel())?.[1].split(' · ')[0]||aiModel())+'</span>';
+    else{let m='';try{m=(await r.json()).error.message}catch(e){}res.innerHTML='<span class="neg">✗ '+esc(aiErrMsg(r.status,m))+'</span>'}}
+  catch(e){res.innerHTML='<span class="neg">✗ '+aiErrMsg('net')+'</span>'}
+  btn.disabled=false};
 $('#clModel').onchange=()=>{const o=LS.get('ai',{});o.model=$('#clModel').value;LS.set('ai',o)};
 
 
