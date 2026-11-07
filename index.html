@@ -160,6 +160,7 @@ details.more summary::-webkit-details-marker{display:none}
 .stack{display:flex;flex-direction:column;gap:12px}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:50;background:var(--toast-bg);color:var(--toast-fg);padding:11px 16px;border-radius:13px;font-size:14px;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
 .ai-panel{height:min(90vh,90dvh);display:flex;flex-direction:column}.ai-log{flex:1;overflow:auto;display:flex;flex-direction:column;gap:10px;padding:4px 0}.ai-m{border-radius:14px;padding:10px 13px;font-size:14.5px;line-height:1.75;max-width:94%}.ai-m.u{background:var(--accent);color:var(--accent-ink);align-self:flex-start}.ai-m.a{background:var(--surface);border:1px solid var(--line);align-self:flex-end}.ai-m.a h4{margin:8px 0 4px;font-family:var(--f-display);font-size:15px}.ai-m.a p{margin:4px 0}.ai-m.a ul,.ai-m.a ol{margin:4px 0;padding-inline-start:20px}.ai-m.err{background:var(--bad-soft)}
+.set-grp{font-size:12.5px;font-weight:600;color:var(--muted);margin:16px 4px 6px}.panel .sec{margin-bottom:10px}.sb-bad{color:var(--bad)}.sb-sql{font-size:11px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:8px;max-height:200px;overflow:auto;white-space:pre-wrap;direction:ltr;text-align:left}.sb-how ol{padding-inline-start:18px;font-size:13px;color:var(--ink-2)}.sb-how li{margin-bottom:6px}.sb-how summary{color:var(--accent);cursor:pointer;font-size:13.5px}
 .foot{font-size:11.5px;color:var(--muted);text-align:center;line-height:1.6;margin-top:4px}
 .foot a{color:var(--accent)}
 </style>
@@ -168,7 +169,7 @@ details.more summary::-webkit-details-marker{display:none}
 <header class="top"><div class="top-in">
   <div class="brand">
     <span class="logo" aria-hidden="true" style="font-family:var(--f-display);font-weight:700;font-size:19px">خ</span>
-    <div><h1>خياراتي</h1><p id="sub">حاسبة عقود الخيارات بالرسوم والريال</p></div>
+    <div><h1>خياراتي</h1><p id="sub">الإصدار <span class="num" id="verLbl"></span></p></div>
   </div>
   <div class="top-btns" style="display:flex;gap:8px">
   <button id="btnHide" class="icon-btn" type="button" aria-label="إخفاء المبالغ"><svg class="eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.9 17.9A10.4 10.4 0 0 1 12 19c-6.4 0-10-7-10-7a18.4 18.4 0 0 1 4.1-5"/><path d="M9.9 5.2A9.7 9.7 0 0 1 12 5c6.4 0 10 7 10 7a18.6 18.6 0 0 1-2.2 3.2"/><path d="M14.1 14.1a3 3 0 1 1-4.2-4.2"/><path d="M3 3l18 18"/></svg></button>
@@ -331,21 +332,26 @@ details.more summary::-webkit-details-marker{display:none}
 
 <!-- إعدادات -->
 <div class="sheet" id="setSheet" hidden><div class="panel" role="dialog" aria-modal="true">
-  <div class="grab"></div><h3>الإعدادات والرسوم</h3>
-  <div class="stack">
-    <div><label class="lbl">المظهر</label><div class="seg" id="themeSeg"><button data-v="auto">تلقائي</button><button data-v="light">فاتح</button><button data-v="dark">داكن</button></div></div>
-    <div><label class="lbl" for="setBroker">عدّل رسوم وسيط</label><select class="field" id="setBroker"></select></div>
-    <div id="feeForm" class="stack"></div>
-    <p class="hint" id="feeNote" style="margin:0"></p>
-    <div class="grid2"><button class="btn" id="resetFees">استعادة الافتراضي</button><button class="btn primary" id="saveFees">حفظ</button></div>
-    <div class="card" style="padding:12px"><div class="card-h" style="margin-bottom:8px"><h2>المساعد الذكي (Claude)</h2></div>
-      <div class="stack"><div><label class="lbl" for="clKey">مفتاح API</label><input class="field" type="password" id="clKey" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="sk-ant-…"></div>
-      <div><label class="lbl" for="clModel">النموذج</label><select class="field" id="clModel"></select></div>
-      <p class="hint" style="margin:0" id="clNote">من platform.claude.com. يبقى على جهازك فقط. إذا كان مفتاحك محفوظًا في مصروفي على نفس الجوال يُستخدم تلقائيًا.</p></div></div>
-    <div class="grid2"><button class="btn" id="exportBtn">تصدير بياناتي</button><button class="btn" id="importBtn">استيراد</button></div>
-    <input type="file" id="importFile" accept="application/json" hidden>
-    <button class="btn" id="closeSet">إغلاق</button>
-  </div>
+  <div class="grab"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0">الإعدادات</h3><button class="btn" id="closeSet" type="button">إغلاق</button></div>
+  <div class="set-grp">عام</div>
+  <div class="card sec"><div class="card-h"><h2>المظهر</h2></div><div class="seg" id="themeSeg"><button data-v="auto">تلقائي</button><button data-v="light">فاتح</button><button data-v="dark">داكن</button></div></div>
+  <div class="set-grp">الرسوم والصرف</div>
+  <div class="card sec"><div class="card-h"><h2>رسوم الوسيط</h2></div>
+    <div class="stack"><select class="field" id="setBroker"></select><div id="feeForm" class="stack"></div><p class="hint" id="feeNote" style="margin:0"></p>
+    <div class="grid2"><button class="btn" id="resetFees">استعادة الافتراضي</button><button class="btn primary" id="saveFees">حفظ</button></div></div></div>
+  <div class="set-grp">الربط</div>
+  <div class="card sec"><div class="card-h"><h2>المساعد الذكي (Claude)</h2></div>
+    <div class="stack"><div><label class="lbl" for="clKey">مفتاح API</label><input class="field" type="password" id="clKey" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="sk-ant-…"></div>
+    <div><label class="lbl" for="clModel">النموذج</label><select class="field" id="clModel"></select></div>
+    <p class="hint" style="margin:0" id="clNote">من platform.claude.com. يبقى على جهازك فقط، ولا يدخل في النسخة الاحتياطية ولا المزامنة.</p></div></div>
+  <div class="card sec"><div class="card-h"><h2>المزامنة بين أجهزتك</h2><span class="hint">Supabase</span></div><div id="sbSec" class="stack"></div></div>
+  <div class="set-grp">البيانات</div>
+  <div class="card sec"><div class="card-h"><h2>النسخ الاحتياطي</h2></div>
+    <div class="grid2"><button class="btn primary" id="exportBtn">نسخة احتياطية JSON</button><button class="btn" id="importBtn">استيراد نسخة</button></div>
+    <input type="file" id="importFile" accept="application/json,.json" hidden>
+    <p class="hint" style="margin:8px 0 0">احفظ النسخة في iCloud Drive وليس «على الـ iPhone». حذف أيقونة التطبيق قد يحذف بياناته.</p></div>
+  <p class="foot" id="aboutTxt"></p>
 </div></div>
 
 <!-- تفاصيل صفقة -->
@@ -377,6 +383,7 @@ details.more summary::-webkit-details-marker{display:none}
 
 <script>
 "use strict";
+const APP_VER='1.9',APP_BUILT='2026-11-07';
 /* ---------- helpers ---------- */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const num=v=>{v=String(v??'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[٫,]/g,'.');const n=parseFloat(v);return isFinite(n)?n:NaN};
@@ -388,7 +395,8 @@ const pct=(n,d=1)=>`<span class="num">${f2(n,d)}%</span>`;
 const sg=n=>n>0?'pos':n<0?'neg':'';
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const today=()=>{const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
-const LS={get(k,d){try{const v=localStorage.getItem('opt_'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('opt_'+k,JSON.stringify(v))}catch(e){}}};
+const LS={get(k,d){try{const v=localStorage.getItem('opt_'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('opt_'+k,JSON.stringify(v))}catch(e){}if(SYNC_KEYS.includes(k)&&window.sbDiff)setTimeout(sbDiff,0)}};
+const SYNC_KEYS=['trades','brokers','cap','checks','simple'];
 function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>t.hidden=true,2200)}
 
 /* ---------- brokers ---------- */
@@ -777,7 +785,7 @@ function renderFeeForm(){const k=$('#setBroker').value,b=brokers[k];
   $('#feeForm').innerHTML=`<div><label class="lbl">اسم الوسيط</label><input class="field txt" data-k="name" value="${esc(b.name)}"></div><div class="grid2">${FEE_FIELDS.map(([f,l])=>`<div><label class="lbl">${l}</label><input class="field" data-k="${f}" inputmode="decimal" value="${b[f]}"></div>`).join('')}</div>`;
   $('#feeNote').textContent=b.note||''}
 $('#setBroker').onchange=renderFeeForm;
-$('#openSettings').onclick=()=>{$('#setBroker').value=st.broker;renderFeeForm();$('#setSheet').hidden=false};
+$('#openSettings').onclick=()=>{$('#setBroker').value=st.broker;renderFeeForm();sbRender();$('#aboutTxt').innerHTML=`خياراتي · الإصدار <span class="num">${APP_VER}</span> · ${APP_BUILT}`;$('#setSheet').hidden=false};
 $('#closeSet').onclick=()=>$('#setSheet').hidden=true;
 $('#saveFees').onclick=()=>{const k=$('#setBroker').value,b=brokers[k];$$('#feeForm input').forEach(i=>{const f=i.dataset.k;b[f]=f==='name'?(i.value.trim()||b.name):(num(i.value)||0)});if(!(b.fxRate>0))b.fxRate=3.75;LS.set('brokers',brokers);fillBrokerSelects();calc();renderFX();toast('حُفظت الرسوم')};
 $('#resetFees').onclick=()=>{const k=$('#setBroker').value;brokers[k]=structuredClone(DEF_BROKERS[k]);LS.set('brokers',brokers);fillBrokerSelects();renderFeeForm();calc();toast('أُعيدت القيم الافتراضية')};
@@ -861,9 +869,97 @@ if(!LS.get('ai',{}).key&&aiCfg().key)$('#clNote').textContent='يُستخدم م
 $('#clKey').onchange=()=>{const o=LS.get('ai',{});o.key=$('#clKey').value.replace(/\s+/g,'');if(!o.key)delete o.key;LS.set('ai',o);toast(o.key?'حُفظ المفتاح':'حُذف المفتاح')};
 $('#clModel').onchange=()=>{const o=LS.get('ai',{});o.model=$('#clModel').value;LS.set('ai',o)};
 
+
+/* ---------- المزامنة عبر Supabase (نفس مشروع وجدول مصروفي: masrufi_kv، store='o') ---------- */
+const SB_K='opt_sb',SB_QK='opt_sbq',SB_SNAPK='opt_sbsnap',SB_TABLE='masrufi_kv',SB_STORE='o';
+const lsG=k=>{try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}},lsS=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+let SB=lsG(SB_K)||{},SBQ=lsG(SB_QK)||{},SNAP=lsG(SB_SNAPK)||{},SB_ERR='',SB_BUSY=null,SB_TIMER=null,SB_TOK=null,SB_OUT=0;
+(()=>{const m=lsG('masrufi.sb.v1');if(m&&!SB.url&&m.url){SB.url=m.url;SB.key=m.key;SB.email=m.email}})(); // نفس المشروع المحفوظ في مصروفي
+const sbSave=()=>lsS(SB_K,SB),sbSaveQ=()=>{lsS(SB_QK,SBQ);lsS(SB_SNAPK,SNAP)};
+const sbOn=()=>!!(SB.url&&SB.key&&SB.rt);
+const sbErr=(c,m)=>{const e=new Error(m||String(c));e.code=c;return e};
+function sbAuth(path,body){return fetch(SB.url+'/auth/v1/'+path,{method:'POST',headers:{'content-type':'application/json',apikey:SB.key,Authorization:'Bearer '+SB.key},body:JSON.stringify(body)})
+  .then(r=>r.json().catch(()=>({})).then(j=>{if(!r.ok)throw sbErr(r.status,j.msg||j.error_description||j.message||j.error||'');return j}),()=>{throw sbErr('net')})}
+function sbKeep(j){SB.at=j.access_token;SB.rt=j.refresh_token;SB.exp=Date.now()+(j.expires_in||3600)*1000;if(j.user){SB.uid=j.user.id;SB.email=j.user.email}sbSave()}
+function sbToken(){if(SB.at&&SB.exp-Date.now()>90000)return Promise.resolve(SB.at);
+  if(!SB_TOK)SB_TOK=sbAuth('token?grant_type=refresh_token',{refresh_token:SB.rt}).then(j=>{SB_TOK=null;sbKeep(j);return SB.at},e=>{SB_TOK=null;if(e.code===400||e.code===401){SB.rt='';SB.at='';sbSave();SB_ERR='انتهت جلسة الدخول؛ ادخل مرة أخرى من الإعدادات ← المزامنة.'}throw e});return SB_TOK}
+function sbRest(method,query,body,prefer){return sbToken().then(tok=>{const h={apikey:SB.key,Authorization:'Bearer '+tok};if(body)h['content-type']='application/json';if(prefer)h.Prefer=prefer;
+  return fetch(SB.url+'/rest/v1/'+SB_TABLE+query,{method,cache:'no-store',headers:h,body:body?JSON.stringify(body):undefined})
+   .then(r=>{if(!r.ok)return r.text().then(t=>{let m='';try{m=JSON.parse(t).message}catch(e){m=t.slice(0,160)}throw sbErr(r.status,m)});return method==='GET'?r.json():null},()=>{throw sbErr('net')})})}
+function sbMsg(e){const c=e&&e.code,m=(e&&e.message)||'';
+  if(c==='net')return 'لا اتصال بالإنترنت أو تعذّر الوصول إلى Supabase.';
+  if(c===400&&/invalid login|credentials/i.test(m))return 'الإيميل أو كلمة المرور غير صحيحة.';
+  if(/confirm/i.test(m))return 'الحساب لم يُفعَّل بعد: أطفئ Confirm email في Supabase أو افتح رسالة التفعيل، ثم «دخول».';
+  if(/signups? not allowed|signup.*disabled/i.test(m))return 'إنشاء الحسابات مطفأ في مشروعك. حسابك موجود من مصروفي وكتابي، فاضغط «دخول».';
+  if(c===401||c===403)return 'رُفض الطلب: تأكد من المفتاح العام (anon أو publishable).';
+  if(c===404||new RegExp(SB_TABLE).test(m))return 'الجدول masrufi_kv غير موجود: شغّل كود SQL (طريقة الإعداد ← نسخ كود SQL).';
+  return m||String(c)}
+function sbUrl(x){x=String(x||'').trim();if(!x)return '';let m=/supabase\.com\/dashboard\/project\/([a-z0-9]{10,40})/i.exec(x);if(m)return 'https://'+m[1].toLowerCase()+'.supabase.co';
+  if(/^[a-z0-9]{15,40}$/i.test(x))return 'https://'+x.toLowerCase()+'.supabase.co';if(!/^https?:\/\//i.test(x))x='https://'+x;try{const u=new URL(x);return u.protocol==='https:'?u.origin:''}catch(e){return ''}}
+function hashOf(x){const s=JSON.stringify(x)||'';let a=2166136261;for(let i=0;i<s.length;i++){a^=s.charCodeAt(i);a=Math.imul(a,16777619)}return (a>>>0).toString(36)+s.length}
+function sbPieces(){const o={};trades.forEach(t=>o['t:'+t.id]=t);o['s:brokers']=brokers;const c=LS.get('cap','');if(c!=='')o['s:cap']=c;o['s:checks']=checks;return o}
+function sbDiff(){if(!sbOn()||!SB.ready)return;const o=sbPieces(),now=Date.now();let any=false;
+  Object.keys(o).forEach(k=>{const h=hashOf(o[k]);if(!SNAP[k]||SNAP[k][0]!==h){SNAP[k]=[h,now];SBQ[k]=1;any=true}});
+  Object.keys(SNAP).forEach(k=>{if(!(k in o)&&SNAP[k][0]!=='x'){SNAP[k]=['x',now];SBQ[k]=1;any=true}});if(any){sbSaveQ();sbSoon()}}
+function sbSoon(ms){if(!sbOn())return;clearTimeout(SB_TIMER);SB_TIMER=setTimeout(()=>sbSync(),ms||3000)}
+function sbApply(rows){let n=0;
+  rows.forEach(r=>{const k=r.k,rt=r.v?+r.v.t||0:0,loc=SNAP[k];if(SBQ[k]&&loc&&loc[1]>=rt)return;const d=r.deleted?null:r.v&&r.v.d;
+    if(k.startsWith('t:')){const id=k.slice(2);trades=trades.filter(t=>t.id!==id);if(d&&d.id)trades.push(d)}
+    else if(k==='s:brokers'){if(d)brokers=d}else if(k==='s:cap'){localStorage.setItem('opt_cap',JSON.stringify(d??''))}else if(k==='s:checks'){if(Array.isArray(d))checks=d}else return;
+    SNAP[k]=[null,rt];delete SBQ[k];n++});
+  if(!n)return 0;
+  localStorage.setItem('opt_trades',JSON.stringify(trades));localStorage.setItem('opt_brokers',JSON.stringify(brokers));localStorage.setItem('opt_checks',JSON.stringify(checks));
+  const o=sbPieces();Object.keys(SNAP).forEach(k=>{if(SNAP[k][0]===null)SNAP[k][0]=k in o?hashOf(o[k]):'x'});sbSaveQ();return n}
+function sbSync(manual){if(!sbOn())return Promise.resolve();if(SB_BUSY)return SB_BUSY;
+  if(navigator.onLine===false){SB_ERR='لا اتصال بالإنترنت؛ ستُرفع التغييرات حين يعود.';sbInfo();return Promise.resolve()}
+  const first=!SB.ready;let pulled=0,pushed=0,cursor=SB.cursor||'1970-01-01T00:00:00Z';SB_ERR='';sbDiff();sbInfo();
+  const page=()=>sbRest('GET','?select=k,v,deleted,updated_at&store=eq.'+SB_STORE+'&updated_at=gt.'+encodeURIComponent(cursor)+'&order=updated_at.asc&limit=1000').then(rows=>{pulled+=sbApply(rows);if(rows.length){cursor=rows[rows.length-1].updated_at;SB.cursor=cursor;sbSave()}if(rows.length===1000)return page()});
+  SB_BUSY=page().then(()=>{if(first){SB.ready=1;sbSave();sbDiff()}return sbPush()}).then(n=>{pushed=n||0;SB.last=Date.now();sbSave();
+    if(pulled){fillBrokerSelects();renderLog();renderSimple();renderCheck();try{calc()}catch(e){}}
+    if(manual)toast(pulled||pushed?'زُومن: وصل '+pulled+' ورُفع '+pushed:'كل شيء متزامن')},e=>{SB_ERR=sbMsg(e);if(manual)toast(SB_ERR)}).then(()=>{SB_BUSY=null;sbInfo()});
+  return SB_BUSY}
+function sbPush(){const keys=Object.keys(SBQ);if(!keys.length)return Promise.resolve(0);const o=sbPieces();
+  const rows=keys.map(k=>{const del=!(k in o);return {store:SB_STORE,k,v:{d:del?null:o[k],t:(SNAP[k]||[0,Date.now()])[1]},deleted:del}});
+  return sbRest('POST','?on_conflict=user_id,store,k',rows,'resolution=merge-duplicates,return=minimal').then(()=>{rows.forEach(r=>{if(SNAP[r.k]&&SNAP[r.k][1]===r.v.t)delete SBQ[r.k]});sbSaveQ();return rows.length})}
+const pad=n=>String(n).padStart(2,'0');
+function sbInfoText(){if(SB_ERR)return '<span class="sb-bad">'+esc(SB_ERR)+'</span>';if(SB_BUSY)return 'تجري المزامنة…';const q=Object.keys(SBQ).length,d=SB.last?new Date(SB.last):null;
+  return (d?'آخر مزامنة: '+(d.toDateString()===new Date().toDateString()?'اليوم ':d.toISOString().slice(0,10)+' ')+d.getHours()+':'+pad(d.getMinutes()):'لم تتم مزامنة بعد')+(q?' · بانتظار الرفع: '+q:'')}
+function sbInfo(){const el=$('#sb-info');if(el&&sbOn())el.innerHTML=sbInfoText()}
+const SB_SQL=['create table if not exists public.masrufi_kv (','  user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,','  store text not null,','  k text not null,','  v jsonb,','  deleted boolean not null default false,','  updated_at timestamptz not null default clock_timestamp(),','  primary key (user_id, store, k)',');','create index if not exists masrufi_kv_sync on public.masrufi_kv (user_id, store, updated_at);','alter table public.masrufi_kv enable row level security;','drop policy if exists "masrufi own rows" on public.masrufi_kv;','create policy "masrufi own rows" on public.masrufi_kv for all to authenticated','  using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);',"create or replace function public.masrufi_touch() returns trigger language plpgsql set search_path = '' as $$",'begin new.updated_at := clock_timestamp(); return new; end $$;','drop trigger if exists masrufi_touch on public.masrufi_kv;','create trigger masrufi_touch before insert or update on public.masrufi_kv for each row execute function public.masrufi_touch();','grant select, insert, update, delete on public.masrufi_kv to authenticated;'].join('\n');
+function sbRender(){const el=$('#sbSec');if(!el)return;if(!sbOn()&&$('#sb-url')&&el.contains($('#sb-url')))return;
+  if(sbOn()){el.innerHTML=`<p class="hint" style="margin:0">متصل بحساب <b dir="ltr">${esc(SB.email||'')}</b></p><p class="hint" id="sb-info" style="margin:0">${sbInfoText()}</p><div class="grid2"><button type="button" class="btn primary" data-sb="now">زامن الآن</button><button type="button" class="btn" data-sb="out">${SB_OUT&&Date.now()-SB_OUT<5000?'اضغط مرة أخرى للخروج':'خروج'}</button></div>`;return}
+  el.innerHTML=`${SB.url?'<p class="hint" style="margin:0">أخذت رابط مشروعك ومفتاحه من مصروفي. اكتب كلمة المرور فقط ثم «دخول».</p>':''}
+   <div><label class="lbl" for="sb-url">رابط المشروع (Project URL)</label><input id="sb-url" class="field" type="url" autocapitalize="off" spellcheck="false" placeholder="https://xxxx.supabase.co" value="${esc(SB.url||'')}"></div>
+   <div><label class="lbl" for="sb-key">المفتاح العام (publishable أو anon)</label><input id="sb-key" class="field" autocapitalize="off" spellcheck="false" placeholder="sb_publishable_…" value="${esc(SB.key||'')}"></div>
+   <div><label class="lbl" for="sb-email">الإيميل</label><input id="sb-email" class="field" type="email" autocapitalize="off" value="${esc(SB.email||'')}"></div>
+   <div><label class="lbl" for="sb-pass">كلمة المرور</label><input id="sb-pass" class="field" type="password" autocomplete="current-password"></div>
+   <div class="grid2"><button type="button" class="btn primary" data-sb="in">دخول</button><button type="button" class="btn" data-sb="up">إنشاء حساب</button></div><p class="hint" id="sb-info" style="margin:0">${SB_ERR?'<span class="sb-bad">'+esc(SB_ERR)+'</span>':''}</p>
+   <details class="sb-how"><summary>طريقة الإعداد</summary><ol><li>يستعمل <b>نفس مشروع وجدول مصروفي وكتابي</b>، فلا تحتاج تشغيل أي كود إذا كانت مزامنة مصروفي تعمل. اكتب إيميلك وكلمة مرورك نفسها ثم «دخول».</li><li>إن لم يكن لديك مشروع: أنشئ مشروعًا مجانيًا في <a href="https://supabase.com/dashboard" target="_blank" rel="noopener">supabase.com</a> وشغّل الكود أدناه من SQL Editor، ثم أطفئ Confirm email و«إنشاء حساب» هنا.</li><li>ابدأ بالجهاز الذي فيه بياناتك، ثم الجهاز الثاني و«دخول».</li></ol><button type="button" class="btn" data-sb="sql">نسخ كود SQL</button><pre class="sb-sql">${esc(SB_SQL)}</pre></details>`}
+function sbForm(){const info=$('#sb-info'),bad=t=>{if(info)info.innerHTML='<span class="sb-bad">'+esc(t)+'</span>';return null};
+  let raw=$('#sb-url').value||'',key=($('#sb-key').value||'').replace(/\s+/g,'');const both=/(https?:\/\/[^\s]+)\s+((?:sb_publishable_|eyJ)[^\s]+)/.exec(raw);if(both){raw=both[1];key=both[2];$('#sb-key').value=key}
+  const url=sbUrl(raw),em=($('#sb-email').value||'').trim(),pw=$('#sb-pass').value||'';
+  if(!url)return bad('رابط المشروع غير صحيح. شكله: https://….supabase.co');if(key.length<20)return bad('الصق المفتاح العام كاملًا.');
+  if(/^sb_secret_/.test(key)||/service_role/.test(key))return bad('هذا المفتاح السري؛ الصق المفتاح العام.');if(!/^\S+@\S+\.\S+$/.test(em))return bad('اكتب الإيميل كاملًا.');if(pw.length<6)return bad('كلمة المرور 6 أحرف فأكثر.');
+  $('#sb-url').value=url;SB={url,key,email:em};sbSave();return {email:em,password:pw}}
+function sbAfterIn(j){sbKeep(j);SB.cursor='';SB.ready=0;SB_ERR='';sbSave();SBQ={};SNAP={};sbSaveQ();sbRender();toast('تم الدخول؛ تجري أول مزامنة…');sbSync(true).then(sbRender)}
+function sbCopy(t){try{navigator.clipboard.writeText(t).then(()=>toast('نُسخ'))}catch(e){}}
+const SB_ACT={in:()=>{const f=sbForm();if(!f)return;const o=$('#sb-info');if(o)o.textContent='جارٍ الدخول…';sbAuth('token?grant_type=password',f).then(sbAfterIn,e=>{SB_ERR=sbMsg(e);if(o)o.innerHTML='<span class="sb-bad">'+esc(SB_ERR)+'</span>'})},
+  up:()=>{const f=sbForm();if(!f)return;const o=$('#sb-info');if(o)o.textContent='جارٍ إنشاء الحساب…';sbAuth('signup',f).then(j=>{if(j.access_token)sbAfterIn(j);else if(o)o.textContent='أُنشئ الحساب. افتح رسالة التفعيل ثم «دخول».'},e=>{SB_ERR=sbMsg(e);if(o)o.innerHTML='<span class="sb-bad">'+esc(SB_ERR)+'</span>'})},
+  now:()=>{SB_ERR='';sbSync(true)},
+  out:()=>{if(!SB_OUT||Date.now()-SB_OUT>5000){SB_OUT=Date.now();sbRender();return}SB_OUT=0;const o=SB;if(o.at)fetch(o.url+'/auth/v1/logout',{method:'POST',headers:{apikey:o.key,Authorization:'Bearer '+o.at}}).catch(()=>{});
+    SB={url:o.url,key:o.key,email:o.email};sbSave();SBQ={};SNAP={};sbSaveQ();SB_ERR='';sbRender();toast('خرجت من المزامنة؛ بياناتك باقية على هذا الجهاز')},
+  sql:()=>sbCopy(SB_SQL)};
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-sb]');if(!b)return;const f=SB_ACT[b.dataset.sb];if(f){e.preventDefault();f(b)}},true);
+document.addEventListener('input',e=>{const t=e.target,id=t&&t.id;if(sbOn()||!['sb-url','sb-key','sb-email'].includes(id))return;if(id==='sb-url')SB.url=t.value.trim();else if(id==='sb-key')SB.key=t.value.replace(/\s+/g,'');else SB.email=t.value.trim();sbSave()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)sbSoon(800);else if(Object.keys(SBQ).length)sbSync()});
+window.addEventListener('online',()=>sbSoon(800));setInterval(()=>{if(!document.hidden)sbSync()},120000);
+window.sbDiff=sbDiff;
+
 /* init */
+$('#verLbl').textContent=APP_VER;
 fillBrokerSelects();$('#broker').value=st.broker;bindCalc();applyTheme(LS.get('theme','auto'));renderCheck();renderQuiz();go('simple');
-if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+if('serviceWorker' in navigator&&location.protocol!=='file:'){const had=!!navigator.serviceWorker.controller;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had)toast('نسخة جديدة جاهزة؛ اضغط زر التحديث')});navigator.serviceWorker.register('sw.js').catch(()=>{})}
+sbSoon(800);
 </script>
 </body>
 </html>
