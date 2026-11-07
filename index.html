@@ -58,6 +58,9 @@ button,input,select,textarea{font:inherit;color:inherit}
 .brand p{margin:0;font-size:12.5px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .icon-btn{appearance:none;border:1px solid var(--line);background:var(--surface);width:40px;height:40px;border-radius:12px;display:grid;place-items:center;cursor:pointer;color:var(--ink-2);flex:none}
 .icon-btn svg{width:20px;height:20px}
+#btnHide .eye-off{display:none}.hide-money #btnHide .eye{display:none}.hide-money #btnHide .eye-off{display:block}.hide-money #btnHide{color:var(--accent)}
+.icon-btn.spin svg{animation:spin .9s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.brand p{max-width:42vw}
 .wrap{max-width:560px;margin:0 auto;padding:14px max(16px,env(safe-area-inset-left,0px)) calc(96px + env(safe-area-inset-bottom,0px))}
 .view{display:flex;flex-direction:column;gap:14px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
@@ -126,6 +129,8 @@ details.more summary::-webkit-details-marker{display:none}
 .kpi{background:var(--surface-2);border-radius:12px;padding:10px 12px}
 .kpi .k{font-size:12px;color:var(--ink-2)} .kpi .v{font-family:var(--f-display);font-size:19px;font-weight:600}
 .tbl{width:100%;border-collapse:collapse;font-size:14px}.tbl th{font-size:12px;color:var(--muted);font-weight:500;text-align:right;padding:6px 4px;border-bottom:1px solid var(--line)}.tbl td{padding:9px 4px;border-bottom:1px dashed var(--line)}.tbl tr.be td{background:var(--warn-soft);font-weight:600}.tbl tr.cur td{background:var(--accent-soft);font-weight:600}.tbl td:first-child{font-weight:600}
+.money{display:inline-flex;flex-direction:column;align-items:flex-end;line-height:1.2;vertical-align:middle}.money .sar{font-size:.68em;opacity:.72;font-weight:500;direction:rtl;white-space:nowrap}.hero .v .money .sar{font-size:.42em}.hero .v .money{align-items:flex-start}.tile .money,.kpi .money{align-items:flex-start}
+.hide-money .money,.hide-money .hero .v,.hide-money .tile .v2,.hide-money .kpi .v,.hide-money .amt{filter:blur(9px)}
 .empty{text-align:center;color:var(--muted);padding:26px 10px;font-size:14px}
 /* learn */
 .acc details{border-bottom:1px solid var(--line);padding:10px 0}
@@ -153,6 +158,7 @@ details.more summary::-webkit-details-marker{display:none}
 .panel h3{font-family:var(--f-display);font-size:17px;margin:0 0 12px}
 .stack{display:flex;flex-direction:column;gap:12px}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:50;background:var(--toast-bg);color:var(--toast-fg);padding:11px 16px;border-radius:13px;font-size:14px;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
+.ai-panel{height:min(90vh,90dvh);display:flex;flex-direction:column}.ai-log{flex:1;overflow:auto;display:flex;flex-direction:column;gap:10px;padding:4px 0}.ai-m{border-radius:14px;padding:10px 13px;font-size:14.5px;line-height:1.75;max-width:94%}.ai-m.u{background:var(--accent);color:var(--accent-ink);align-self:flex-start}.ai-m.a{background:var(--surface);border:1px solid var(--line);align-self:flex-end}.ai-m.a h4{margin:8px 0 4px;font-family:var(--f-display);font-size:15px}.ai-m.a p{margin:4px 0}.ai-m.a ul,.ai-m.a ol{margin:4px 0;padding-inline-start:20px}.ai-m.err{background:var(--bad-soft)}
 .foot{font-size:11.5px;color:var(--muted);text-align:center;line-height:1.6;margin-top:4px}
 .foot a{color:var(--accent)}
 </style>
@@ -160,10 +166,15 @@ details.more summary::-webkit-details-marker{display:none}
 <body>
 <header class="top"><div class="top-in">
   <div class="brand">
-    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 3 8-9"/><path d="M15 6h5v5"/></svg></div>
+    <span class="logo" aria-hidden="true" style="font-family:var(--f-display);font-weight:700;font-size:19px">خ</span>
     <div><h1>خياراتي</h1><p id="sub">حاسبة عقود الخيارات بالرسوم والريال</p></div>
   </div>
-  <button class="icon-btn" id="openSettings" aria-label="الإعدادات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+  <div class="top-btns" style="display:flex;gap:8px">
+  <button id="btnHide" class="icon-btn" type="button" aria-label="إخفاء المبالغ"><svg class="eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.9 17.9A10.4 10.4 0 0 1 12 19c-6.4 0-10-7-10-7a18.4 18.4 0 0 1 4.1-5"/><path d="M9.9 5.2A9.7 9.7 0 0 1 12 5c6.4 0 10 7 10 7a18.6 18.6 0 0 1-2.2 3.2"/><path d="M14.1 14.1a3 3 0 1 1-4.2-4.2"/><path d="M3 3l18 18"/></svg></button>
+  <button id="btnAI" class="icon-btn" type="button" aria-label="Claude: حلّل صفقاتي"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg></button>
+  <button id="btnRefresh" class="icon-btn" type="button" aria-label="تحديث التطبيق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.3-4.9L4 8"/><path d="M4 3v5h5"/><path d="M4 13a8 8 0 0 0 14.3 4.9L20 16"/><path d="M20 21v-5h-5"/></svg></button>
+  <button class="icon-btn" id="openSettings" type="button" aria-label="الإعدادات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+</div>
 </div></header>
 
 <main class="wrap">
@@ -321,6 +332,10 @@ details.more summary::-webkit-details-marker{display:none}
     <div id="feeForm" class="stack"></div>
     <p class="hint" id="feeNote" style="margin:0"></p>
     <div class="grid2"><button class="btn" id="resetFees">استعادة الافتراضي</button><button class="btn primary" id="saveFees">حفظ</button></div>
+    <div class="card" style="padding:12px"><div class="card-h" style="margin-bottom:8px"><h2>المساعد الذكي (Claude)</h2></div>
+      <div class="stack"><div><label class="lbl" for="clKey">مفتاح API</label><input class="field" type="password" id="clKey" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="sk-ant-…"></div>
+      <div><label class="lbl" for="clModel">النموذج</label><select class="field" id="clModel"></select></div>
+      <p class="hint" style="margin:0" id="clNote">من platform.claude.com. يبقى على جهازك فقط. إذا كان مفتاحك محفوظًا في مصروفي على نفس الجوال يُستخدم تلقائيًا.</p></div></div>
     <div class="grid2"><button class="btn" id="exportBtn">تصدير بياناتي</button><button class="btn" id="importBtn">استيراد</button></div>
     <input type="file" id="importFile" accept="application/json" hidden>
     <button class="btn" id="closeSet">إغلاق</button>
@@ -343,6 +358,15 @@ details.more summary::-webkit-details-marker{display:none}
   </div>
 </div></div>
 
+
+<div class="sheet" id="aiSheet" hidden><div class="panel ai-panel" role="dialog" aria-modal="true">
+  <div class="grab"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3 style="margin:0">✦ مساعد الخيارات</h3><div style="display:flex;gap:6px"><button class="btn" id="aiNew">محادثة جديدة</button><button class="btn" id="aiClose">إغلاق</button></div></div>
+  <p class="hint" style="margin:4px 0 10px">يرى صفقتك الحالية وسجلك ورسوم سهم. تعليمي وليس توصية.</p>
+  <div id="aiLog" class="ai-log"></div>
+  <div class="chips" id="aiChips" style="margin:10px 0"></div>
+  <form id="aiForm" style="display:flex;gap:8px"><input class="field txt" id="aiQ" placeholder="اسأل عن صفقتك…" autocomplete="off"><button class="btn primary" id="aiSend" type="submit">إرسال</button></form>
+</div></div>
 <div class="toast" id="toast" hidden></div>
 
 <script>
@@ -351,7 +375,8 @@ details.more summary::-webkit-details-marker{display:none}
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const num=v=>{v=String(v??'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[٫,]/g,'.');const n=parseFloat(v);return isFinite(n)?n:NaN};
 const f2=(n,d=2)=>isFinite(n)?n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}):'—';
-const usd=(n,d=2)=>`<span class="num">${n<-0.004?'−':''}$${f2(Math.abs(n),d)}</span>`;
+const RATE=()=>{try{return (brokers.sahm.fxRate||3.75)}catch(e){return 3.75}};
+const usd=(n,d=2,noS)=>{const m=`<span class="num">${n<-0.004?'−':''}$${f2(Math.abs(n),d)}</span>`;return noS||!isFinite(n)?m:`<span class="money">${m}<small class="sar">${n<-0.004?'−':''}${f2(Math.abs(n*RATE()),2)} ر.س</small></span>`};
 const sar=(n,d=2)=>`<span><span class="num">${n<-0.004?'−':''}${f2(Math.abs(n),d)}</span> ر.س</span>`;
 const pct=(n,d=1)=>`<span class="num">${f2(n,d)}%</span>`;
 const sg=n=>n>0?'pos':n<0?'neg':'';
@@ -645,11 +670,11 @@ function renderSimple(){
   let be=B;for(let i=0;i<2000;i++){const sf=legFees(b,be,N,'sell');if(be*100*N-sf.total>=paid)break;be+=0.01}
   $('#qTbl').innerHTML=sellTable(b,B,N,paid,be,$('#qSell').value===''?-1:Sl);
   if(!(Sl>=0)||$('#qSell').value===''){
-    $('#qHero').innerHTML=`<div class="k">دفعت</div><div class="v">${usd(paid)}</div><div class="s">≈ ${sar(paid*rate)}</div>
+    $('#qHero').innerHTML=`<div class="k">دفعت</div><div class="v">${usd(paid)}</div>
      <div class="tiles"><div class="tile"><div class="k">لا تخسر إذا بعت بـ</div><div class="v2"><span class="num">${f2(be)}</span> أو أعلى</div></div><div class="tile"><div class="k">إذا انتهى بلا قيمة تخسر</div><div class="v2">${usd(-paid)}</div></div></div>`;
     $('#qRows').innerHTML=`<div class="row"><span class="k">قيمة العقد</span>${usd(B*100*N)}</div><div class="row"><span class="k">العمولة</span>${usd(bf.comm)}</div><div class="row"><span class="k">رسوم الطرف الثالث</span>${usd(bf.reg)}</div><div class="row"><span class="k">ضريبة القيمة المضافة</span>${usd(bf.vat)}</div><div class="row tot"><span>إجمالي ما دفعته</span>${usd(paid)}</div>`;return}
   const sf=Sl>0?legFees(b,Sl,N,'sell'):{comm:0,reg:0,vat:0,total:0},got=Sl*100*N-sf.total,net=got-paid,fees=bf.total+sf.total;
-  $('#qHero').innerHTML=`<div class="k">${net>=0?'ربحك الصافي':'خسارتك الصافية'}</div><div class="v">${usd(net)}</div><div class="s">≈ ${sar(net*rate)} · بعد كل الرسوم</div>
+  $('#qHero').innerHTML=`<div class="k">${net>=0?'ربحك الصافي':'خسارتك الصافية'}</div><div class="v">${usd(net)}</div><div class="s">بعد كل الرسوم</div>
    <div class="tiles"><div class="tile"><div class="k">دفعت</div><div class="v2">${usd(paid)}</div></div><div class="tile"><div class="k">استلمت</div><div class="v2">${usd(got)}</div></div>
    <div class="tile"><div class="k">مجموع الرسوم</div><div class="v2">${usd(fees)}</div></div><div class="tile"><div class="k">نقطة التعادل</div><div class="v2"><span class="num">${f2(be)}</span></div></div></div>`;
   $('#qRows').innerHTML=`<div class="row"><span class="k"><b>الشراء</b> · قيمة العقد</span>${usd(B*100*N)}</div><div class="row"><span class="k">العمولة</span>${usd(bf.comm)}</div><div class="row"><span class="k">رسوم الطرف الثالث</span>${usd(bf.reg)}</div><div class="row"><span class="k">الضريبة</span>${usd(bf.vat)}</div><div class="row tot"><span>إجمالي الشراء</span>${usd(paid)}</div>
@@ -709,6 +734,74 @@ $('#importBtn').onclick=()=>$('#importFile').click();
 $('#importFile').onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text());if(d.brokers)brokers=d.brokers;if(Array.isArray(d.trades))trades=d.trades;LS.set('brokers',brokers);LS.set('trades',trades);fillBrokerSelects();calc();renderLog();toast('تم الاستيراد')}catch(err){toast('الملف غير صالح')}};
 $$('.sheet').forEach(s=>s.addEventListener('click',e=>{if(e.target===s)s.hidden=true}));
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>calc());
+
+
+/* ---------- header: hide, refresh ---------- */
+let hideM=LS.get('hide',false);document.documentElement.classList.toggle('hide-money',hideM);
+$('#btnHide').onclick=()=>{hideM=!hideM;LS.set('hide',hideM);document.documentElement.classList.toggle('hide-money',hideM);toast(hideM?'المبالغ مخفية':'المبالغ ظاهرة')};
+$('#btnRefresh').onclick=()=>{const b=$('#btnRefresh');b.classList.add('spin');b.disabled=true;let p=Promise.resolve();
+ if('serviceWorker' in navigator)p=p.then(()=>navigator.serviceWorker.getRegistration()).then(r=>r&&r.update()).catch(()=>{});
+ if(window.caches)p=p.then(()=>caches.keys()).then(k=>Promise.all(k.filter(x=>x.startsWith('khiyarati-')).map(x=>caches.delete(x)))).catch(()=>{});
+ p.then(()=>location.reload())};
+
+/* ---------- Claude ---------- */
+const AI_MODELS=[['claude-sonnet-5-5','Sonnet 5.5 · متوازن (مستحسن)'],['claude-opus-5-5','Opus 5.5 · الأدق'],['claude-haiku-5-5','Haiku 5.5 · الأسرع والأرخص']];
+const aiCfg=()=>{const own=LS.get('ai',{});if(!own.key){try{const m=JSON.parse(localStorage.getItem('masrufi.ai.v1')||'{}');if(m.key)return {key:m.key,model:own.model||m.model}}catch(e){}}return own};
+const aiModel=()=>aiCfg().model||AI_MODELS[0][0];
+let aiMsgs=[],aiCtl=null;
+function aiErrMsg(c,m){return c==='nokey'?'أضف مفتاح Claude API من الإعدادات ⚙️ أولًا.':c===401?'مفتاح API غير صحيح.':c===429?'تجاوزت حد الطلبات أو نفد الرصيد. انتظر قليلًا.':(c===529||c===503||c===500)?'خدمة Claude مزدحمة، أعد المحاولة.':c===404?'اسم النموذج غير معروف، اختر نموذجًا آخر.':c==='net'?'لا يوجد اتصال بالإنترنت.':c==='stop'?'أُوقف.':(m||String(c))}
+async function aiCall(system,messages,onText){
+  const key=(aiCfg().key||'').trim();if(!key)throw {code:'nokey'};
+  aiCtl=new AbortController();let r;
+  try{r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',signal:aiCtl.signal,cache:'no-store',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:aiModel(),max_tokens:1600,stream:true,system,messages})})}
+  catch(e){throw {code:e.name==='AbortError'?'stop':'net'}}
+  if(!r.ok){let m='';try{m=JSON.parse(await r.text()).error.message}catch(e){}throw {code:r.status,msg:m}}
+  const rd=r.body.getReader(),dec=new TextDecoder();let buf='',out='';
+  for(;;){const x=await rd.read();if(x.done)break;buf+=dec.decode(x.value,{stream:true});const L=buf.split('\n');buf=L.pop();
+    for(const ln of L){if(!ln.startsWith('data:'))continue;let ev;try{ev=JSON.parse(ln.slice(5))}catch(e){continue}
+      if(ev.type==='content_block_delta'&&ev.delta?.type==='text_delta'){out+=ev.delta.text;onText(out)}}}
+  return out;
+}
+const mdIn=t=>t.replace(/\*\*([^*\n]+)\*\*/g,'<b>$1</b>');
+function md(src){const o=[];let list=null,para=[];const fp=()=>{if(para.length){o.push('<p>'+mdIn(para.join('<br>'))+'</p>');para=[]}},fl=()=>{if(list){o.push(`<${list.t}>`+list.i.map(x=>'<li>'+mdIn(x)+'</li>').join('')+`</${list.t}>`);list=null}};
+ esc(src).split('\n').forEach(ln=>{const s=ln.trim();let m;if(!s){fp();fl();return}
+  if(m=/^#{1,4}\s+(.*)$/.exec(s)){fp();fl();o.push('<h4>'+mdIn(m[1])+'</h4>');return}
+  if(m=/^[-*•]\s+(.*)$/.exec(s)){fp();if(!list||list.t!=='ul'){fl();list={t:'ul',i:[]}}list.i.push(m[1]);return}
+  if(m=/^\d+[.)]\s+(.*)$/.exec(s)){fp();if(!list||list.t!=='ol'){fl();list={t:'ol',i:[]}}list.i.push(m[1]);return}
+  if(/^\|/.test(s)){fp();fl();o.push('<p class="num" style="direction:rtl">'+mdIn(s)+'</p>');return}
+  fl();para.push(s)});fp();fl();return o.join('')}
+function aiContext(){
+  const b=brokers.sahm,q=LS.get('simple',{}),B=num(q.b),Sl=num(q.s),N=Math.max(1,Math.round(num(q.n)||1));
+  let cur='لا توجد صفقة مكتوبة في شاشة صفقتي.';
+  if(B>0){const bf=legFees(b,B,N,'buy'),paid=B*100*N+bf.total;let be=B;while(be*100*N-legFees(b,be,N,'sell').total<paid&&be<1e4)be+=0.01;
+    cur=`شاشة صفقتي: ${q.y||'رمز غير محدد'}، شراء ${N} عقد بسعر ${B} (دفع ${paid.toFixed(2)}$ شاملة رسوم ${bf.total.toFixed(2)}$)، التعادل ${be.toFixed(2)}`;
+    if(Sl>=0&&q.s!==''){const sf=Sl>0?legFees(b,Sl,N,'sell'):{total:0},net=Sl*100*N-sf.total-paid;cur+=`، بيع بسعر ${Sl} ← صافي ${net.toFixed(2)}$`}}
+  const tl=trades.slice(-40).map(t=>{const r=tradeNet(t);return `${t.date} ${t.sym} ${t.K?(t.type+' '+t.K):''} دخول ${t.P} × ${t.N}${t.exit!=null?` خروج ${t.exit} صافي ${r.net.toFixed(2)}$`:' مفتوحة'}`}).join('\n')||'لا صفقات مسجلة';
+  return `أنت مساعد تعليمي في تطبيق «خياراتي» لحساب عقود الخيارات الأمريكية لمستثمر سعودي يتداول عبر منصة سهم (Sahm Capital).
+اكتب بالعربية الفصحى المبسطة، مختصرًا ومنظمًا، بأرقام محسوبة لا بعبارات عامة. لا تمدح ولا تحفّز. إذا لم تكن متأكدًا قل ذلك.
+لا تعطِ توصية شراء أو بيع لعقد بعينه كأنها مؤكدة؛ اعرض الحسابات والمخاطر واترك القرار للمستخدم. لا تذكر أي معلومة عن أسعار السوق الحالية لأنك لا تراها.
+رسوم سهم لكل جهة (شراء أو بيع): عمولة 0.99$/عقد بحد أدنى 1.99$ (وللعقود ≤0.10: 0.49$/عقد بحد أدنى 0.99$)، رسوم طرف ثالث ≈0.22$ شراء و≈0.24$ بيع لعقد واحد، وضريبة 15% على الرسوم. العقد = 100 سهم. سعر الصرف ${b.fxRate} ريال للدولار.
+${cur}
+سجل الصفقات:
+${tl}`;
+}
+const AI_CHIPS=[['حلّل صفقتي','حلّل صفقتي الحالية: التكلفة، التعادل، أثر الرسوم، وما الذي كان يمكن تحسينه.'],['بكم أبيع؟','بناءً على سعر شرائي، ما أسعار البيع المنطقية للربح ووقف الخسارة؟ اشرح بالأرقام.'],['قيّم سجلي','قيّم سجل صفقاتي: الأنماط، أثر الرسوم، والأخطاء المتكررة.'],['هل الرسوم تستاهل؟','كم عقدًا أحتاج حتى لا تأكل الرسوم أكثر من 5% من قيمة الصفقة؟']];
+function aiRender(){$('#aiLog').innerHTML=aiMsgs.length?aiMsgs.map(m=>`<div class="ai-m ${m.role==='user'?'u':'a'} ${m.err?'err':''}">${m.role==='user'?esc(m.content):md(m.content||'…')}</div>`).join(''):'<div class="empty">اختر سؤالًا جاهزًا أو اكتب سؤالك.</div>';$('#aiLog').scrollTop=1e9}
+async function aiAsk(text){if(!text.trim())return;aiMsgs.push({role:'user',content:text});const a={role:'assistant',content:''};aiMsgs.push(a);aiRender();$('#aiSend').disabled=true;
+  try{await aiCall(aiContext(),aiMsgs.filter(m=>m!==a&&!m.err).map(m=>({role:m.role,content:m.content})),t=>{a.content=t;aiRender()})}
+  catch(e){a.content=aiErrMsg(e.code,e.msg);a.err=true}
+  aiRender();$('#aiSend').disabled=false}
+$('#aiChips').innerHTML=AI_CHIPS.map((c,i)=>`<button class="chip" type="button" data-i="${i}">${c[0]}</button>`).join('');
+$('#aiChips').onclick=e=>{const c=e.target.closest('.chip');if(c)aiAsk(AI_CHIPS[+c.dataset.i][1])};
+$('#aiForm').onsubmit=e=>{e.preventDefault();const v=$('#aiQ').value;$('#aiQ').value='';aiAsk(v)};
+$('#btnAI').onclick=()=>{$('#aiSheet').hidden=false;aiRender();if(!aiCfg().key)toast('أضف مفتاح Claude من الإعدادات')};
+$('#aiClose').onclick=()=>{$('#aiSheet').hidden=true;aiCtl?.abort()};
+$('#aiNew').onclick=()=>{aiMsgs=[];aiRender()};
+$('#clModel').innerHTML=AI_MODELS.map(m=>`<option value="${m[0]}">${m[1]}</option>`).join('');
+$('#clModel').value=aiModel();$('#clKey').value=LS.get('ai',{}).key||'';
+if(!LS.get('ai',{}).key&&aiCfg().key)$('#clNote').textContent='يُستخدم مفتاحك المحفوظ في مصروفي. اكتب مفتاحًا هنا إذا أردت مفتاحًا مختلفًا.';
+$('#clKey').onchange=()=>{const o=LS.get('ai',{});o.key=$('#clKey').value.replace(/\s+/g,'');if(!o.key)delete o.key;LS.set('ai',o);toast(o.key?'حُفظ المفتاح':'حُذف المفتاح')};
+$('#clModel').onchange=()=>{const o=LS.get('ai',{});o.model=$('#clModel').value;LS.set('ai',o)};
 
 /* init */
 fillBrokerSelects();$('#broker').value=st.broker;bindCalc();applyTheme(LS.get('theme','auto'));renderCheck();renderQuiz();go('simple');
