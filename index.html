@@ -310,7 +310,7 @@ html[data-skin=pro] .btn.danger{background:var(--bad-soft)}
   </div>
   <div class="top-btns" style="display:flex;gap:8px">
   <button id="btnHide" class="icon-btn" type="button" aria-label="إخفاء المبالغ"><svg class="eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.9 17.9A10.4 10.4 0 0 1 12 19c-6.4 0-10-7-10-7a18.4 18.4 0 0 1 4.1-5"/><path d="M9.9 5.2A9.7 9.7 0 0 1 12 5c6.4 0 10 7 10 7a18.6 18.6 0 0 1-2.2 3.2"/><path d="M14.1 14.1a3 3 0 1 1-4.2-4.2"/><path d="M3 3l18 18"/></svg></button>
-  <button id="btnAI" class="icon-btn" type="button" aria-label="Claude: حلّل صفقاتي"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg></button>
+  <button id="btnAI" class="icon-btn" type="button" aria-label="حلّل صفقاتي"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg></button>
   <button id="btnRefresh" class="icon-btn" type="button" aria-label="تحديث التطبيق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.3-4.9L4 8"/><path d="M4 3v5h5"/><path d="M4 13a8 8 0 0 0 14.3 4.9L20 16"/><path d="M20 21v-5h-5"/></svg></button>
   <button class="icon-btn" id="openSettings" type="button" aria-label="الإعدادات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
 </div>
@@ -520,7 +520,7 @@ html[data-skin=pro] .btn.danger{background:var(--bad-soft)}
     <p>يبقى على جهازك فقط، ولا يدخل في النسخة الاحتياطية ولا المزامنة. ينبغي أن يكون السعر من الباقة المجانية؛ قد يتأخر قليلًا، وتظهر الساعة بجانبه. سعر العقد نفسه خذه من منصة سهم.</p>
   </div>
   </div>
-<div class="sec sfold" id="setAI"><div class="card-h"><h2>المساعد الذكي (Claude)</h2><span class="hint" id="aiSum"></span></div>
+<div class="sec sfold" id="setAI"><div class="card-h"><h2>المساعد الذكي</h2><span class="hint" id="aiSum"></span></div>
     <label class="lbl" for="clKey">مفتاح API</label><input class="field" type="password" id="clKey" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="sk-ant-…">
     <label class="lbl" for="clModel">النموذج</label><select class="field" id="clModel"></select>
     <div class="btns" style="align-items:center"><button class="btn primary" id="clTest" type="button">جرّب المفتاح</button><span class="small" id="clRes"></span></div>
@@ -571,7 +571,7 @@ html[data-skin=pro] .btn.danger{background:var(--bad-soft)}
 
 <script>
 "use strict";
-const APP_VER='1.21',APP_BUILT='2026-11-07';
+const APP_VER='1.22',APP_BUILT='2026-11-07';
 /* ---------- helpers ---------- */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const num=v=>{v=String(v??'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[٫,]/g,'.');const n=parseFloat(v);return isFinite(n)?n:NaN};
@@ -789,7 +789,7 @@ function verdict(){
   el.innerHTML=`<div class="vd-h"><div class="vd-score ${cls}">${score}</div><div><div class="vd-t">رأي المحلل: ${t}</div><div class="vd-s">لتربح عند الانتهاء يجب أن ${need} (${move>0?'+':''}${f2(move,1)}%) خلال ${D} يوم.</div></div></div>
    ${pros.length?`<div class="chips" style="margin-bottom:6px">${pros.map(p=>`<span class="chip" style="cursor:default;background:var(--good-soft);border-color:transparent;color:var(--good)">✓ ${p}</span>`).join('')}</div>`:''}
    ${sug.map((x,i)=>`<div class="sug"><span class="n">${i+1}</span><div>${x}</div></div>`).join('')}
-   <button class="btn block mt" id="askAI" type="button">✦ اطلب رأي Claude المفصّل</button>
+   <button class="btn block mt" id="askAI" type="button">✦ اطلب رأي المساعد المفصّل</button>
    <p class="hint" style="margin:8px 0 0">التقييم يعتمد على هيكل الصفقة (المدة، السعر، الرسوم، الحجم)، ولا يعرف اتجاه السوق. القرار لك.</p>`;
   $('#askAI').onclick=()=>{$('#aiSheet').hidden=false;aiAsk(`حلّل هذا العقد قبل أن أشتريه كمحلل محترف: ${st.sym} ${type==='call'?'كول':'بوت'}، سعر السهم ${S}، سعر التنفيذ ${K}، سعر العقد ${P}، ${N} عقد، ${D} يومًا للانتهاء، IV ${f2(iv,0)}%، دلتا ${f2(g.delta)}، ثيتا يومي ${D<=1?'(العقد ينتهي اليوم، يفقد قيمته الزمنية كاملة)':f2(Math.max(g.theta*100*N,-cost))+'$'}، التعادل ${f2(be)} (${f2(move,1)}%)، الرسوم ${f2(feesPct,1)}%، ${share!=null?`الصفقة ${f2(share,0)}% من رأس مال ${f2(cap)}$`:'رأس المال غير محدد'}. أعطني: تقييمًا صريحًا، وما الذي يجب أن يحدث لأربح، وبدائل أفضل في الهيكل (مدة/سعر تنفيذ/حجم) بالأرقام، وخطة خروج.`)};
 }
@@ -1033,7 +1033,7 @@ const AI_MODELS=[['claude-sonnet-5-5','Sonnet 5.5 · متوازن (مستحسن)
 const aiCfg=()=>{const own=LS.get('ai',{});if(!own.key){try{const m=JSON.parse(localStorage.getItem('masrufi.ai.v1')||'{}');if(m.key)return {key:m.key,model:own.model||m.model}}catch(e){}}return own};
 const aiModel=()=>aiCfg().model||AI_MODELS[0][0];
 let aiMsgs=[],aiCtl=null;
-function aiErrMsg(c,m){return c==='nokey'?'أضف مفتاح Claude API من الإعدادات ⚙️ أولًا.':c===401?'مفتاح API غير صحيح.':c===429?'تجاوزت حد الطلبات أو نفد الرصيد. انتظر قليلًا.':(c===529||c===503||c===500)?'خدمة Claude مزدحمة، أعد المحاولة.':c===404?'اسم النموذج غير معروف، اختر نموذجًا آخر.':c==='net'?'لا يوجد اتصال بالإنترنت.':c==='stop'?'أُوقف.':c==='timeout'?'تأخر الرد أكثر من 90 ثانية. أعد المحاولة أو اختر Haiku.':c==='empty'?('وصل رد بلا نص'+(m&&/refusal/.test(m)?': النموذج امتنع عن الإجابة، أعد صياغة السؤال.':m&&/max_tokens/.test(m)?': استهلك التفكير كل المساحة، أعد المحاولة.':'. أعد المحاولة.')+(m?' ('+m+')':'')):(m||String(c))}
+function aiErrMsg(c,m){return c==='nokey'?'أضف مفتاح المساعد الذكي من الإعدادات ⚙️ أولًا.':c===401?'مفتاح API غير صحيح.':c===429?'تجاوزت حد الطلبات أو نفد الرصيد. انتظر قليلًا.':(c===529||c===503||c===500)?'خدمة المساعد مزدحمة، أعد المحاولة.':c===404?'اسم النموذج غير معروف، اختر نموذجًا آخر.':c==='net'?'لا يوجد اتصال بالإنترنت.':c==='stop'?'أُوقف.':c==='timeout'?'تأخر الرد أكثر من 90 ثانية. أعد المحاولة أو اختر Haiku.':c==='empty'?('وصل رد بلا نص'+(m&&/refusal/.test(m)?': النموذج امتنع عن الإجابة، أعد صياغة السؤال.':m&&/max_tokens/.test(m)?': استهلك التفكير كل المساحة، أعد المحاولة.':'. أعد المحاولة.')+(m?' ('+m+')':'')):(m||String(c))}
 async function aiCall(system,messages,onText){
   const key=(aiCfg().key||'').trim();if(!key)throw {code:'nokey'};
   aiCtl=new AbortController();let timedOut=false;const to=setTimeout(()=>{timedOut=true;aiCtl.abort()},90000);
@@ -1094,7 +1094,7 @@ async function aiAsk(text){if(!text.trim())return;aiMsgs.push({role:'user',conte
 $('#aiChips').innerHTML=AI_CHIPS.map((c,i)=>`<button class="chip" type="button" data-i="${i}">${c[0]}</button>`).join('');
 $('#aiChips').onclick=e=>{const c=e.target.closest('.chip');if(c)aiAsk(AI_CHIPS[+c.dataset.i][1])};
 $('#aiForm').onsubmit=e=>{e.preventDefault();const v=$('#aiQ').value;$('#aiQ').value='';aiAsk(v)};
-$('#btnAI').onclick=()=>{$('#aiSheet').hidden=false;aiRender();if(!aiCfg().key)toast('أضف مفتاح Claude من الإعدادات')};
+$('#btnAI').onclick=()=>{$('#aiSheet').hidden=false;aiRender();if(!aiCfg().key)toast('أضف مفتاح المساعد من الإعدادات')};
 $('#aiClose').onclick=()=>{$('#aiSheet').hidden=true;aiCtl?.abort()};
 $('#aiNew').onclick=()=>{aiMsgs=[];aiRender()};
 $('#clModel').innerHTML=AI_MODELS.map(m=>`<option value="${m[0]}">${m[1]}</option>`).join('');
